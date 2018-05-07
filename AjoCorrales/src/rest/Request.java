@@ -21,8 +21,10 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.naming.NamingContext;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;    
+import javassist.bytecode.stackmap.TypeData.ClassName;
+
+import org.apache.log4j.Logger;
+
 
 @Path("/upmsocial")
 public class Request {
@@ -32,7 +34,7 @@ public class Request {
 	private DataSource ds;
 	private Connection conn;
 	
-	private static final Logger log = Logger.getLogger("rest.Request");
+	private static final Logger log = Logger.getLogger(ClassName.class.getName());
 	
 	public Request() {
 		log.info("Dentro del constructor");
@@ -44,9 +46,9 @@ public class Request {
 			ds = (DataSource) envCtx.lookup("jdbc/UPMSocial");
 			conn = ds.getConnection();
 		} catch (NamingException e) {
-			e.printStackTrace();
+			log.error(e.getMessage() + e.getStackTrace());
 		} catch (SQLException e) {
-			e.printStackTrace();
+			log.error(e.getMessage() + e.getStackTrace());
 		}
 	}
 
