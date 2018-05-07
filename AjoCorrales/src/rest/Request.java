@@ -4,12 +4,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -22,11 +20,9 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.naming.NamingContext;
 
 import javassist.bytecode.stackmap.TypeData.ClassName;
-
 import org.apache.log4j.Logger;
 
-
-@Path("/upmsocial")
+@Path("upmsocial")
 public class Request {
 	@Context
 	private UriInfo uriInfo;
@@ -44,6 +40,7 @@ public class Request {
 			NamingContext envCtx = (NamingContext) ctx.lookup("java:comp/env");
 
 			ds = (DataSource) envCtx.lookup("jdbc/UPMSocial");
+			
 			conn = ds.getConnection();
 		} catch (NamingException | SQLException e) {
 			log.error(e.getMessage() + e.getStackTrace());
@@ -53,15 +50,13 @@ public class Request {
 	// Lista de garajes JSON/XML generada con listas en JAXB
 	@GET
 	@Produces({MediaType.APPLICATION_XML,MediaType.APPLICATION_JSON})
-	public Response getUsuarios(@QueryParam("offset") @DefaultValue("1") String offset,
-			@QueryParam("count") @DefaultValue("10") String count) {
+	public Response getUsuarios() {
 		PreparedStatement ps = null;
 		Request g = new Request();
 		try {
 			String sql = "SELECT * FROM Usuarios";
 			ps = conn.prepareStatement(sql);
 			ResultSet rs = ps.executeQuery();
-			
 			rs.beforeFirst();
 			while (rs.next()) {
 				log.info(rs.getString("nickname"));
