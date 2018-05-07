@@ -45,9 +45,7 @@ public class Request {
 
 			ds = (DataSource) envCtx.lookup("jdbc/UPMSocial");
 			conn = ds.getConnection();
-		} catch (NamingException e) {
-			log.error(e.getMessage() + e.getStackTrace());
-		} catch (SQLException e) {
+		} catch (NamingException | SQLException e) {
 			log.error(e.getMessage() + e.getStackTrace());
 		}
 	}
