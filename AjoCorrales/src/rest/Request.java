@@ -56,16 +56,18 @@ public class Request {
 	public Response getUsuarios(@QueryParam("offset") @DefaultValue("1") String offset,
 			@QueryParam("count") @DefaultValue("10") String count) {
 		PreparedStatement ps = null;
+		Request g = new Request();
 		try {
 			String sql = "SELECT * FROM Usuarios";
 			ps = conn.prepareStatement(sql);
 			ResultSet rs = ps.executeQuery();
-			Request g = new Request();
+			
 			rs.beforeFirst();
 			while (rs.next()) {
 				log.info(rs.getString("nickname"));
 				log.info(rs.getString(2));
 			}
+			rs.close();
 			return Response.status(Response.Status.OK).entity(g).build(); // No se puede devolver el ArrayList (para generar XML)
 		} catch (NumberFormatException e) {
 			return Response.status(Response.Status.BAD_REQUEST).entity("No se pudieron convertir los índices a números")
