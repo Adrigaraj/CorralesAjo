@@ -21,6 +21,9 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.naming.NamingContext;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;    
+
 @Path("/upmsocial")
 public class Request {
 	@Context
@@ -28,14 +31,17 @@ public class Request {
 
 	private DataSource ds;
 	private Connection conn;
-
+	
+	private static final Logger log = Logger.getLogger("rest.Request");
+	
 	public Request() {
+		log.info("Dentro del constructor");
 		InitialContext ctx;
 		try {
 			ctx = new InitialContext();
 			NamingContext envCtx = (NamingContext) ctx.lookup("java:comp/env");
 
-			ds = (DataSource) envCtx.lookup("jdbc/GarajesyEmpleados");
+			ds = (DataSource) envCtx.lookup("jdbc/UPMSocial");
 			conn = ds.getConnection();
 		} catch (NamingException e) {
 			e.printStackTrace();
