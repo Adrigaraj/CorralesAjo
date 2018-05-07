@@ -53,18 +53,18 @@ public class Request {
 	// Lista de garajes JSON/XML generada con listas en JAXB
 	@GET
 	@Produces({MediaType.APPLICATION_XML,MediaType.APPLICATION_JSON})
-	public Response getGarajes2(@QueryParam("offset") @DefaultValue("1") String offset,
+	public Response getUsuarios(@QueryParam("offset") @DefaultValue("1") String offset,
 			@QueryParam("count") @DefaultValue("10") String count) {
+		PreparedStatement ps = null;
 		try {
-			int off = Integer.parseInt(offset);
-			int c = Integer.parseInt(count);
-			String sql = "SELECT * FROM Garaje order by id LIMIT " + (off - 1) + "," + c + ";";
-			PreparedStatement ps = conn.prepareStatement(sql);
+			String sql = "SELECT * FROM Usuarios";
+			ps = conn.prepareStatement(sql);
 			ResultSet rs = ps.executeQuery();
 			Request g = new Request();
 			rs.beforeFirst();
 			while (rs.next()) {
-				
+				log.info(rs.getString("nickname"));
+				log.info(rs.getString(2));
 			}
 			return Response.status(Response.Status.OK).entity(g).build(); // No se puede devolver el ArrayList (para generar XML)
 		} catch (NumberFormatException e) {
@@ -72,6 +72,13 @@ public class Request {
 					.build();
 		} catch (SQLException e) {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error de acceso a BBDD").build();
+		}finally {
+			if(ps != null)
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					log.error(e.getMessage() + e.getStackTrace());
+				}
 		}
 	}
 	
