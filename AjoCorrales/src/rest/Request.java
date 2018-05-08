@@ -35,7 +35,7 @@ public class Request {
 		log.info("Dentro del constructor");
 		Properties prop = new Properties();
 		try {
-			prop.load(new FileReader("resources/propertiesFiles/bbdd.properties"));
+			prop.load(new FileReader("resources/bbdd.properties"));
 			Class.forName(prop.getProperty("driver"));
 			conn = DriverManager.getConnection(prop.getProperty("url"), prop.getProperty("user"),
 					prop.getProperty("passwd"));
