@@ -1,7 +1,8 @@
 package rest;
 
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -30,12 +31,11 @@ public class Request {
 
 	private static final Logger log = Logger.getLogger(ClassName.class.getName());
 
-	public Request() {
+	public Request() throws URISyntaxException {
 		log.info("Dentro del constructor");
 		Properties prop = new Properties();
-		InputStream input = Request.class.getClassLoader().getResourceAsStream("bbdd.properties");
 		try {
-			prop.load(input);
+			prop.load(new FileReader("resources/propertiesFiles/bbdd.properties"));
 			Class.forName(prop.getProperty("driver"));
 			conn = DriverManager.getConnection(prop.getProperty("url"), prop.getProperty("user"),
 					prop.getProperty("passwd"));
@@ -50,7 +50,6 @@ public class Request {
 	public Response getUsuarios() {
 		log.info("Petición recibida en getUsuarios()");
 		PreparedStatement ps = null;
-		Request g = new Request();
 		try {
 			String sql = "SELECT * FROM Usuarios";
 			ps = conn.prepareStatement(sql);
