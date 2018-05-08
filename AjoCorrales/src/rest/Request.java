@@ -1,6 +1,5 @@
 package rest;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.sql.Connection;
@@ -35,7 +34,7 @@ public class Request {
 		log.info("Dentro del constructor");
 		Properties prop = new Properties();
 		try {
-			prop.load(new FileReader("resources/bbdd.properties"));
+			prop.load(getClass().getResourceAsStream("resources/bbdd.properties"));
 			Class.forName(prop.getProperty("driver"));
 			conn = DriverManager.getConnection(prop.getProperty("url"), prop.getProperty("user"),
 					prop.getProperty("passwd"));
