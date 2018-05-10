@@ -15,14 +15,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
-
-import com.google.gson.Gson;
 
 import javassist.bytecode.stackmap.TypeData.ClassName;
 
@@ -65,11 +61,7 @@ public class Request {
 	public String getUsuarios() {
 		log.info("Petición recibida en getUsuarios()");
 		PreparedStatement ps = null;
-		ResponseBuilder builder = Response.status(Response.Status.BAD_REQUEST);
 		JSONObject asd = new JSONObject();
-		Gson gson = new Gson();
-		ResponseUpmSocial a = new ResponseUpmSocial("hola", 2);
-		String json = gson.toJson(a);
 		try {
 			String sql = "SELECT * FROM Usuarios";
 			ps = conn.prepareStatement(sql);
