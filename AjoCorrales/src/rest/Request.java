@@ -1,6 +1,5 @@
 package rest;
 
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -35,18 +34,19 @@ public class Request {
 		Properties prop = new Properties();
 		try {
 			// new FileInputStream("bbdd.properties");
-			prop.load(getClass().getResourceAsStream("resources/bbdd.properties"));
-			Class.forName(prop.getProperty("driver"));
-			conn = DriverManager.getConnection(prop.getProperty("url"), prop.getProperty("user"),
-					prop.getProperty("passwd"));
-		} catch (ClassNotFoundException | SQLException | IOException e) {
+			// prop.load(getClass().getResourceAsStream("resources/bbdd.properties"));
+			// Class.forName(prop.getProperty("driver"));
+			Class.forName("com.mysql.jdbc.Driver");
+			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/upmsocialdb?useSSL=false", "restuser1",
+					"restuser1");
+		} catch (ClassNotFoundException | SQLException e) {
 			log.error(e.getMessage() + e.getStackTrace());
 		}
 	}
 
 	// Lista de garajes JSON/XML generada con listas en JAXB
 	@GET
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response getUsuarios() {
 		log.info("Petición recibida en getUsuarios()");
 		PreparedStatement ps = null;
@@ -60,8 +60,11 @@ public class Request {
 				log.info(rs.getString(2));
 			}
 			rs.close();
-			return Response.status(Response.Status.OK).entity("OK").build(); // No se puede devolver el ArrayList (para
-																				// generar XML)
+			ResponseUpmSocial a = new ResponseUpmSocial("hola", 2);
+			return Response.ok(a).build();
+			// return Response.status(Response.Status.OK).entity("OK").build(); // No se
+			// puede devolver el ArrayList (para
+			// generar XML)
 		} catch (NumberFormatException e) {
 			return Response.status(Response.Status.BAD_REQUEST).entity("No se pudieron convertir los índices a números")
 					.build();
