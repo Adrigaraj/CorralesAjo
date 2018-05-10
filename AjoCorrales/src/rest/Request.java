@@ -10,17 +10,23 @@ import java.util.Properties;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
+
+import com.google.gson.Gson;
 
 import javassist.bytecode.stackmap.TypeData.ClassName;
 
-@Path("upmsocial")
+@Path("/upmsocial")
 public class Request {
 	@Context
 	private UriInfo uriInfo;
@@ -44,32 +50,42 @@ public class Request {
 		}
 	}
 
+	@GET
+	@Path("saluda/{nombre}/{apellido}")
+	@Produces(MediaType.TEXT_HTML)
+	public String saludoHtml(@PathParam("nombre") String n, @PathParam("apellido") String a,
+			@QueryParam("apellido2") String a2) {
+		return "<html>" + "<title>" + "Hola JAX-RS" + "</title>" + "<body><h1>" + "Hola " + n + " " + a + " " + a2
+				+ "</body></h1>" + "</html> ";
+	}
+
 	// Lista de garajes JSON/XML generada con listas en JAXB
 	@GET
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public Response getUsuarios() {
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getUsuarios() {
 		log.info("Petición recibida en getUsuarios()");
 		PreparedStatement ps = null;
+		ResponseBuilder builder = Response.status(Response.Status.BAD_REQUEST);
+		JSONObject asd = new JSONObject();
+		Gson gson = new Gson();
+		ResponseUpmSocial a = new ResponseUpmSocial("hola", 2);
+		String json = gson.toJson(a);
 		try {
 			String sql = "SELECT * FROM Usuarios";
 			ps = conn.prepareStatement(sql);
 			ResultSet rs = ps.executeQuery();
 			rs.beforeFirst();
+			int i = 0;
 			while (rs.next()) {
-				log.info(rs.getString("nickname"));
-				log.info(rs.getString(2));
+				Usuario user = new Usuario(rs.getString(1), rs.getString(2), rs.getInt(3), rs.getString(4),
+						rs.getDate(5), rs.getString(6), rs.getDate(7));
+				asd.put("Usuario " + i, user.toJSON());
+				i++;
 			}
 			rs.close();
-			ResponseUpmSocial a = new ResponseUpmSocial("hola", 2);
-			return Response.ok(a).build();
-			// return Response.status(Response.Status.OK).entity("OK").build(); // No se
-			// puede devolver el ArrayList (para
-			// generar XML)
-		} catch (NumberFormatException e) {
-			return Response.status(Response.Status.BAD_REQUEST).entity("No se pudieron convertir los índices a números")
-					.build();
-		} catch (Exception e) {
-			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error de acceso a BBDD").build();
+
+		} catch (NumberFormatException | SQLException e) {
+
 		} finally {
 			if (ps != null)
 				try {
@@ -78,6 +94,7 @@ public class Request {
 					log.error(e.getMessage() + e.getStackTrace());
 				}
 		}
+		return asd.toString();
 	}
 
 }
