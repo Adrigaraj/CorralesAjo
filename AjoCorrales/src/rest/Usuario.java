@@ -25,15 +25,15 @@ public class Usuario {
 	}
 
 	public JSONObject toJSON() {
-		JSONObject a = new JSONObject();
-		a.put("nickname", this.nickname);
-		a.put("nombreCompleto", this.nombreCompleto);
-		a.put("edad", this.edad);
-		a.put("pais", this.pais);
-		a.put("fechaNacimiento", this.fechaNacimiento);
-		a.put("correo", this.correo);
-		a.put("fechaAlta", this.fechaAlta);
-		return a;
+		JSONObject JsObj = new JSONObject();
+		JsObj.put("nickname", this.nickname);
+		JsObj.put("nombreCompleto", this.nombreCompleto);
+		JsObj.put("edad", this.edad);
+		JsObj.put("pais", this.pais);
+		JsObj.put("fechaNacimiento", this.fechaNacimiento);
+		JsObj.put("correo", this.correo);
+		JsObj.put("fechaAlta", this.fechaAlta);
+		return JsObj;
 	}
 
 	@Override
