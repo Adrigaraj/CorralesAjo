@@ -18,8 +18,8 @@ public class ConexionBBDD {
 			// prop.load(getClass().getResourceAsStream("resources/bbdd.properties"));
 			// Class.forName(prop.getProperty("driver"));
 			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/upmsocialdb?useSSL=false", "restuser1",
-					"restuser1");
+			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/UPMSocialDB?useSSL=false", "root",
+					"restuser");
 		} catch (ClassNotFoundException | SQLException e) {
 			log.error(e.getMessage() + e.getStackTrace());
 		}

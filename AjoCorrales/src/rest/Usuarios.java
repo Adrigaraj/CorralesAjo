@@ -13,6 +13,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.xml.bind.JAXBElement;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -34,12 +35,12 @@ public class Usuarios {
 		JSONObject objDevolver = new JSONObject();
 		ResultSet rs = null;
 		try {
-			String sql = "SELECT 'nickname', 'nombreCompleto', 'edad', 'pais', 'fechaNacimiento', 'correo', 'fechaAlta' FROM Usuarios";
+			String sql = "SELECT nickname, nombreCompleto, pais, fechaNacimiento, correo, fechaAlta FROM Usuarios";
 			ps = conn.prepareStatement(sql);
 			rs = ps.executeQuery();
 			int i = 1;
 			while (rs.next()) {
-				Usuario user = new Usuario(rs.getString("nickname"), rs.getString("nombreCompleto"), rs.getInt("edad"),
+				Usuario user = new Usuario(rs.getString("nickname"), rs.getString("nombreCompleto"),
 						rs.getString("pais"), rs.getDate("fechaNacimiento"), rs.getString("correo"),
 						rs.getDate("fechaAlta"));
 				objDevolver.put("Usuario " + i, user.toJSON());
@@ -55,35 +56,56 @@ public class Usuarios {
 	}
 
 	@POST
-	@Path("/{usuario}")
-	@Consumes({ MediaType.APPLICATION_XML })
-	public Response insertarUsuario(Usuario user) {
+	@Consumes(MediaType.APPLICATION_XML)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response insertarUsuario(JAXBElement<Usuario> user) {
 		log.debug("Petición recibida en insertarUsuario()");
 		PreparedStatement ps = null;
 		int inserted = 0;
+		Usuario us = user.getValue();
+		String sql;
 		try {
-			String nickname = user.getNickname();
-			String nombreCompleto = user.getNombreCompleto();
-			int edad = user.getEdad();
-			String pais = user.getPais();
-			Date fechaNacimiento = user.getFechaNacimiento();
-			String correo = user.getCorreo();
-			Date fechaAlta = user.getFechaAlta();
-			if (nickname == null)
+			try {
+				String nombreCompleto = us.getNombreCompleto();
+				String nickname = us.getNickname();
+				String pais = us.getPais();
+				Date fechaNacimiento = us.getFechaNacimiento();
+				String correo = us.getCorreo();
+				Date fechaAlta = new Date(System.currentTimeMillis());
+				if (nickname == null)
+					return Response.status(400).build();
+				if (fechaNacimiento != null)
+					sql = "insert into Usuarios (nickname, nombreCompleto,  pais, fechaNacimiento, correo, fechaAlta) "
+							+ "values ('" + nickname + "', '" + nombreCompleto + "', '" + pais + "', '"
+							+ fechaNacimiento + "', '" + correo + "', '" + fechaAlta + "')";
+				else
+					sql = "insert into Usuarios (nickname, nombreCompleto,  pais, correo, fechaAlta) " + "values ('"
+							+ nickname + "', '" + nombreCompleto + "', '" + pais + "', '" + correo + "', '" + fechaAlta
+							+ "')";
+				ps = conn.prepareStatement(sql);
+				inserted = ps.executeUpdate();
+			} catch (NumberFormatException e) {
+				log.error(e.getMessage() + e.getStackTrace());
 				return Response.status(400).build();
-			String sql = "insert into Usuarios ('nickname', 'nombreCompleto', 'edad', 'pais', 'fechaNacimiento', 'correo', 'fechaAlta') "
-					+ "values (" + nickname + ", " + nombreCompleto + ", " + edad + ", " + pais + ", " + fechaNacimiento
-					+ ", " + correo + ", " + fechaAlta + ")";
-			ps = conn.prepareStatement(sql);
-			inserted = ps.executeUpdate();
-		} catch (NumberFormatException | SQLException e) {
-			log.error(e.getMessage() + e.getStackTrace());
-		} finally {
-			UtilsBBDD.cerrarPs(ps);
+			} catch (SQLException seRs) {
+				String exMsg = "Message from MySQL Database";
+				String exSqlState = "Exception";
+				SQLException mySqlEx = new SQLException(exMsg, exSqlState);
+				seRs.setNextException(mySqlEx);
+				throw seRs;
+			} finally {
+				UtilsBBDD.cerrarPs(ps);
+			}
+		} catch (SQLException se) {
+			System.out.println("Code: " + se.getErrorCode());
+			System.out.println("SqlState: " + se.getSQLState());
+			System.out.println("Error Message: " + se.getMessage());
+			se = se.getNextException();
+			return Response.status(400).entity("Doble PK").build();
 		}
-		if (inserted == 1)
-			return Response.status(201).entity(user.getNickname().toString()).build();
-		else
+		if (inserted == 1) {
+			return Response.status(201).entity(us).build();
+		} else
 			return Response.status(400).build();
 	}
 

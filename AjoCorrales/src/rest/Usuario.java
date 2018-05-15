@@ -7,17 +7,23 @@ import org.json.JSONObject;
 public class Usuario {
 	private String nickname;
 	private String nombreCompleto;
-	private int edad;
 	private String pais;
 	private Date fechaNacimiento;
 	private String correo;
 	private Date fechaAlta;
 
-	public Usuario(String nickname, String nombreCompleto, int edad, String pais, Date fechaNacimiento, String correo,
+	public Usuario() {
+	}
+
+	public Usuario(String nickname, String nombreCompleto) {
+		this.nickname = nickname;
+		this.nombreCompleto = nombreCompleto;
+	}
+
+	public Usuario(String nickname, String nombreCompleto, String pais, Date fechaNacimiento, String correo,
 			Date fechaAlta) {
 		this.nickname = nickname;
 		this.nombreCompleto = nombreCompleto;
-		this.edad = edad;
 		this.pais = pais;
 		this.fechaNacimiento = fechaNacimiento;
 		this.correo = correo;
@@ -28,7 +34,6 @@ public class Usuario {
 		JSONObject JsObj = new JSONObject();
 		JsObj.put("nickname", this.nickname);
 		JsObj.put("nombreCompleto", this.nombreCompleto);
-		JsObj.put("edad", this.edad);
 		JsObj.put("pais", this.pais);
 		JsObj.put("fechaNacimiento", this.fechaNacimiento);
 		JsObj.put("correo", this.correo);
@@ -50,14 +55,6 @@ public class Usuario {
 
 	public void setNombreCompleto(String nombreCompleto) {
 		this.nombreCompleto = nombreCompleto;
-	}
-
-	public int getEdad() {
-		return edad;
-	}
-
-	public void setEdad(int edad) {
-		this.edad = edad;
 	}
 
 	public String getPais() {
@@ -94,9 +91,8 @@ public class Usuario {
 
 	@Override
 	public String toString() {
-		return "Usuario [nickname=" + nickname + ", nombreCompleto=" + nombreCompleto + ", edad=" + edad + ", pais="
-				+ pais + ", fechaNacimiento=" + fechaNacimiento + ", correo=" + correo + ", fechaAlta=" + fechaAlta
-				+ "]";
+		return "Usuario [nickname=" + nickname + ", nombreCompleto=" + nombreCompleto + ", pais=" + pais
+				+ ", fechaNacimiento=" + fechaNacimiento + ", correo=" + correo + ", fechaAlta=" + fechaAlta + "]";
 	}
 
 }
