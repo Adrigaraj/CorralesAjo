@@ -20,6 +20,6 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>Jersey REST Service</servlet-name>
-    <url-pattern>/api/*</url-pattern>
+    <url-pattern>/upmsocial/*</url-pattern>
   </servlet-mapping>
 </web-app>

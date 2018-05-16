@@ -13,7 +13,7 @@ public class UtilsBBDD {
 
 	public static void cerrarRs(ResultSet rs) {
 		try {
-			if (rs != null)
+			if (rs != null && !rs.isClosed())
 				rs.close();
 		} catch (SQLException e) {
 			log.error(e.getLocalizedMessage());
@@ -23,7 +23,7 @@ public class UtilsBBDD {
 
 	public static void cerrarPs(PreparedStatement ps) {
 		try {
-			if (ps != null)
+			if (ps != null && !ps.isClosed())
 				ps.close();
 		} catch (SQLException e) {
 			log.error(e.getLocalizedMessage());

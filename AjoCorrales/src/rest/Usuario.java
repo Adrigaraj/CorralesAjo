@@ -8,7 +8,7 @@ public class Usuario {
 	private String nickname;
 	private String nombreCompleto;
 	private String pais;
-	private Date fechaNacimiento;
+	private String fechaNacimiento;
 	private String correo;
 	private Date fechaAlta;
 
@@ -20,7 +20,7 @@ public class Usuario {
 		this.nombreCompleto = nombreCompleto;
 	}
 
-	public Usuario(String nickname, String nombreCompleto, String pais, Date fechaNacimiento, String correo,
+	public Usuario(String nickname, String nombreCompleto, String pais, String fechaNacimiento, String correo,
 			Date fechaAlta) {
 		this.nickname = nickname;
 		this.nombreCompleto = nombreCompleto;
@@ -65,11 +65,11 @@ public class Usuario {
 		this.pais = pais;
 	}
 
-	public Date getFechaNacimiento() {
+	public String getFechaNacimiento() {
 		return fechaNacimiento;
 	}
 
-	public void setFechaNacimiento(Date fechaNacimiento) {
+	public void setFechaNacimiento(String fechaNacimiento) {
 		this.fechaNacimiento = fechaNacimiento;
 	}
 
