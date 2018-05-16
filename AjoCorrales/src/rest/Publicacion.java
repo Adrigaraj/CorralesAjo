@@ -10,6 +10,10 @@ public class Publicacion {
 	private String propietario;
 	private String tweet;
 
+	public Publicacion() {
+
+	}
+
 	public Publicacion(String idPublicacion, Date fechaPublicacion, String propietario, String tweet) {
 		this.idPublicacion = idPublicacion;
 		this.fechaPublicacion = fechaPublicacion;
