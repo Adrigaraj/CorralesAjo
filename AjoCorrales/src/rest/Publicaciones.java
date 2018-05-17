@@ -51,15 +51,12 @@ public class Publicaciones {
 
 	@DELETE
 	@Path("{nickname}/{idPubli}")
-	@Consumes(MediaType.APPLICATION_XML)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response borrarPublicacion(@PathParam("nickname") String nickname, JAXBElement<String> idPubli) {
+	public Response borrarPublicacion(@PathParam("nickname") String nickname, @PathParam("idPubli") String idPubli) {
 		log.debug("Petición recibida en borrarPublicacion(nickname, idPubli)");
-		String pub = idPubli.getValue();
-		String propietario = nickname;
-		if (pub == null || propietario == null)
+		if (idPubli == null || nickname == null)
 			return Response.status(400).build();
-		int deleted = SentenciasSQL.borrarPublicacion(pub, nickname);
+		int deleted = SentenciasSQL.borrarPublicacion(idPubli, nickname);
 		if (deleted == 1)
 			return Response.status(200).build();
 		else if (deleted == 0)
