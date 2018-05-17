@@ -1,12 +1,10 @@
 package rest;
 
-import java.sql.Date;
-
 import org.json.JSONObject;
 
 public class Publicacion {
 	private String idPublicacion;
-	private Date fechaPublicacion;
+	private String fechaPublicacion;
 	private String propietario;
 	private String tweet;
 
@@ -14,7 +12,7 @@ public class Publicacion {
 
 	}
 
-	public Publicacion(String idPublicacion, Date fechaPublicacion, String propietario, String tweet) {
+	public Publicacion(String idPublicacion, String fechaPublicacion, String propietario, String tweet) {
 		this.idPublicacion = idPublicacion;
 		this.fechaPublicacion = fechaPublicacion;
 		this.propietario = propietario;
@@ -38,11 +36,11 @@ public class Publicacion {
 		this.idPublicacion = idPublicacion;
 	}
 
-	public Date getFechaPublicacion() {
+	public String getFechaPublicacion() {
 		return fechaPublicacion;
 	}
 
-	public void setFechaPublicacion(Date fechaPublicacion) {
+	public void setFechaPublicacion(String fechaPublicacion) {
 		this.fechaPublicacion = fechaPublicacion;
 	}
 

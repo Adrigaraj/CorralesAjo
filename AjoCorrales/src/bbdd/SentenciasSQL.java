@@ -1,6 +1,5 @@
 package bbdd;
 
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -36,7 +35,7 @@ public class SentenciasSQL {
 	}
 
 	public static int insertUsuario(String nickname, String nombreCompleto, String pais, String fechaNacimiento,
-			String correo, Date fechaAlta) {
+			String correo, String fechaAlta) {
 		PreparedStatement ps = null;
 		try {
 			try {
@@ -61,7 +60,7 @@ public class SentenciasSQL {
 				else
 					ps.setString(5, "");
 				if (fechaAlta != null)
-					ps.setDate(6, fechaAlta);
+					ps.setString(6, fechaAlta);
 				else
 					ps.setString(6, "");
 
@@ -83,4 +82,92 @@ public class SentenciasSQL {
 		}
 	}
 
+	public static ResultSet selectUsuario(String nickname) {
+		PreparedStatement ps = null;
+		try {
+			try {
+				ps = ConexionBBDD.getConn().prepareStatement(
+						"SELECT nickname, nombreCompleto, pais, fechaNacimiento, correo, fechaAlta from Usuarios where nickname='"
+								+ nickname + "'");
+				return ps.executeQuery();
+			} catch (SQLException seRs) {
+				String exMsg = "Message from MySQL Database";
+				String exSqlState = "Exception";
+				SQLException mySqlEx = new SQLException(exMsg, exSqlState);
+				seRs.setNextException(mySqlEx);
+				throw seRs;
+			}
+		} catch (SQLException se) {
+			log.error("Code: " + se.getErrorCode());
+			log.error("SqlState: " + se.getSQLState());
+			log.error("Error Message: " + se.getMessage());
+			se = se.getNextException();
+			return null;
+		}
+	}
+
+	public static int borrarPublicacion(String pub, String nickname) {
+		PreparedStatement ps = null;
+		try {
+			try {
+				ps = ConexionBBDD.getConn().prepareStatement("delete from Publicaciones where propietario='" + nickname
+						+ "' and idPublicacion='" + pub + "'");
+
+				return ps.executeUpdate();
+
+			} catch (SQLException seRs) {
+				String exMsg = "Message from MySQL Database";
+				String exSqlState = "Exception";
+				SQLException mySqlEx = new SQLException(exMsg, exSqlState);
+				seRs.setNextException(mySqlEx);
+				throw seRs;
+			}
+		} catch (SQLException se) {
+			log.error("Code: " + se.getErrorCode());
+			log.error("SqlState: " + se.getSQLState());
+			log.error("Error Message: " + se.getMessage());
+			se = se.getNextException();
+			return -1;
+		}
+	}
+
+	public static int insertPublicacion(String idPublicacion, String fechaPublicacion, String propietario,
+			String tweet) {
+		PreparedStatement ps = null;
+		try {
+			try {
+				ps = ConexionBBDD.getConn().prepareStatement(
+						"insert into Publicaciones (idPublicacion, fechaPublicacion, propietario, tweet) "
+								+ "values (?,?,?,?)");
+				ps.setString(1, idPublicacion);
+
+				if (fechaPublicacion != null)
+					ps.setString(2, fechaPublicacion);
+				else
+					ps.setString(2, "");
+
+				ps.setString(3, propietario);
+
+				if (tweet != null)
+					ps.setString(4, tweet);
+				else
+					ps.setString(4, "");
+
+				return ps.executeUpdate();
+
+			} catch (SQLException seRs) {
+				String exMsg = "Message from MySQL Database";
+				String exSqlState = "Exception";
+				SQLException mySqlEx = new SQLException(exMsg, exSqlState);
+				seRs.setNextException(mySqlEx);
+				throw seRs;
+			}
+		} catch (SQLException se) {
+			log.error("Code: " + se.getErrorCode());
+			log.error("SqlState: " + se.getSQLState());
+			log.error("Error Message: " + se.getMessage());
+			se = se.getNextException();
+			return 0;
+		}
+	}
 }

@@ -1,7 +1,5 @@
 package rest;
 
-import java.sql.Date;
-
 import org.json.JSONObject;
 
 public class Usuario {
@@ -10,7 +8,7 @@ public class Usuario {
 	private String pais;
 	private String fechaNacimiento;
 	private String correo;
-	private Date fechaAlta;
+	private String fechaAlta;
 
 	public Usuario() {
 	}
@@ -21,7 +19,7 @@ public class Usuario {
 	}
 
 	public Usuario(String nickname, String nombreCompleto, String pais, String fechaNacimiento, String correo,
-			Date fechaAlta) {
+			String fechaAlta) {
 		this.nickname = nickname;
 		this.nombreCompleto = nombreCompleto;
 		this.pais = pais;
@@ -81,11 +79,11 @@ public class Usuario {
 		this.correo = correo;
 	}
 
-	public Date getFechaAlta() {
+	public String getFechaAlta() {
 		return fechaAlta;
 	}
 
-	public void setFechaAlta(Date fechaAlta) {
+	public void setFechaAlta(String fechaAlta) {
 		this.fechaAlta = fechaAlta;
 	}
 
