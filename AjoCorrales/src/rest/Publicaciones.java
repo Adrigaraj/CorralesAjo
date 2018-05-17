@@ -10,6 +10,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.JAXBElement;
 
 import org.apache.log4j.Logger;
@@ -25,28 +26,28 @@ public class Publicaciones {
 	@Path("{nickname}")
 	@Consumes(MediaType.APPLICATION_XML)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response añadirPublicacion(JAXBElement<Publicacion> publi, @PathParam("nickname") String nickname) {
+	public String añadirPublicacion(JAXBElement<Publicacion> publi, @PathParam("nickname") String nickname) {
 		log.debug("Petición recibida en añadirPublicacion(publi, nickname)");
 		Publicacion pub = publi.getValue();
 		int inserted = 0;
-		try {
-			String idPublicacion = pub.getIdPublicacion();
-			String fechaPublicacion = new Date(new java.util.Date().getTime()).toString();
-			pub.setFechaPublicacion(fechaPublicacion);
-			String propietario = nickname;
+		AppResponse res;
 
-			if (idPublicacion == null || propietario == null)
-				return Response.status(400).build();
+		String idPublicacion = pub.getIdPublicacion();
+		String fechaPublicacion = new Date(new java.util.Date().getTime()).toString();
+		pub.setFechaPublicacion(fechaPublicacion);
+		String propietario = nickname;
 
-			inserted = SentenciasSQL.insertPublicacion(idPublicacion, fechaPublicacion, propietario, pub.getTweet());
-		} catch (NumberFormatException e) {
-			log.error(e.getMessage() + e.getStackTrace());
-			return Response.status(400).build();
-		}
+		if (idPublicacion == null || propietario == null)
+			return new AppResponse(Status.BAD_REQUEST, "Campos ifPublicacion o propietario vacíos", "").toJtoString();
+
+		inserted = SentenciasSQL.insertPublicacion(idPublicacion, fechaPublicacion, propietario, pub.getTweet());
+
 		if (inserted == 1) {
-			return Response.status(201).entity(pub).build();
-		} else
-			return Response.status(400).build();
+			// return Response.status(201).entity(pub).build();
+		} else {
+		}
+		// return Response.status(400).build();
+		return "";
 	}
 
 	@DELETE

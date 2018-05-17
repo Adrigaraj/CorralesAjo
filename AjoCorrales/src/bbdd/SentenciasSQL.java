@@ -15,21 +15,12 @@ public class SentenciasSQL {
 		String sql = "SELECT nickname, nombreCompleto, pais, fechaNacimiento, correo, fechaAlta FROM Usuarios order by fechaAlta";
 		PreparedStatement ps = null;
 		try {
-			try {
-				ps = ConexionBBDD.getConn().prepareStatement(sql);
-				return ps.executeQuery();
-			} catch (SQLException seRs) {
-				String exMsg = "Message from MySQL Database";
-				String exSqlState = "Exception";
-				SQLException mySqlEx = new SQLException(exMsg, exSqlState);
-				seRs.setNextException(mySqlEx);
-				throw seRs;
-			}
-		} catch (SQLException se) {
-			log.error("Code: " + se.getErrorCode());
-			log.error("SqlState: " + se.getSQLState());
-			log.error("Error Message: " + se.getMessage());
-			se = se.getNextException();
+			ps = ConexionBBDD.getConn().prepareStatement(sql);
+			return ps.executeQuery();
+		} catch (SQLException seRs) {
+			log.error("Code: " + seRs.getErrorCode());
+			log.error("SqlState: " + seRs.getSQLState());
+			log.error("Error Message: " + seRs.getMessage());
 			return null;
 		}
 	}
@@ -38,70 +29,52 @@ public class SentenciasSQL {
 			String correo, String fechaAlta) {
 		PreparedStatement ps = null;
 		try {
-			try {
-				ps = ConexionBBDD.getConn().prepareStatement(
-						"insert into Usuarios (nickname, nombreCompleto, pais, fechaNacimiento, correo, fechaAlta) "
-								+ "values(?,?,?,?,?,?)");
-				ps.setString(1, nickname);
-				if (nombreCompleto != null)
-					ps.setString(2, nombreCompleto);
-				else
-					ps.setString(2, "");
-				if (pais != null)
-					ps.setString(3, pais);
-				else
-					ps.setString(3, "");
-				if (fechaNacimiento != null)
-					ps.setString(4, fechaNacimiento);
-				else
-					ps.setString(4, "");
-				if (correo != null)
-					ps.setString(5, correo);
-				else
-					ps.setString(5, "");
-				if (fechaAlta != null)
-					ps.setString(6, fechaAlta);
-				else
-					ps.setString(6, "");
+			ps = ConexionBBDD.getConn().prepareStatement(
+					"insert into Usuarios (nickname, nombreCompleto, pais, fechaNacimiento, correo, fechaAlta) "
+							+ "values(?,?,?,?,?,?)");
+			ps.setString(1, nickname);
+			if (nombreCompleto != null)
+				ps.setString(2, nombreCompleto);
+			else
+				ps.setString(2, "");
+			if (pais != null)
+				ps.setString(3, pais);
+			else
+				ps.setString(3, "");
+			if (fechaNacimiento != null)
+				ps.setString(4, fechaNacimiento);
+			else
+				ps.setString(4, "");
+			if (correo != null)
+				ps.setString(5, correo);
+			else
+				ps.setString(5, "");
+			if (fechaAlta != null)
+				ps.setString(6, fechaAlta);
+			else
+				ps.setString(6, "");
 
-				return ps.executeUpdate();
+			return ps.executeUpdate();
 
-			} catch (SQLException seRs) {
-				String exMsg = "Message from MySQL Database";
-				String exSqlState = "Exception";
-				SQLException mySqlEx = new SQLException(exMsg, exSqlState);
-				seRs.setNextException(mySqlEx);
-				throw seRs;
-			}
-		} catch (SQLException se) {
-			log.error("Code: " + se.getErrorCode());
-			log.error("SqlState: " + se.getSQLState());
-			log.error("Error Message: " + se.getMessage());
-			se = se.getNextException();
-			return 0;
+		} catch (SQLException seRs) {
+			log.error("Code: " + seRs.getErrorCode());
+			log.error("SqlState: " + seRs.getSQLState());
+			log.error("Error Message: " + seRs.getMessage());
+			return seRs.getErrorCode();
 		}
 	}
 
 	public static ResultSet selectUsuario(String nickname) {
 		PreparedStatement ps = null;
 		try {
-			try {
-				ps = ConexionBBDD.getConn().prepareStatement(
-						"SELECT nickname, nombreCompleto, pais, fechaNacimiento, correo, fechaAlta from Usuarios where nickname='"
-								+ nickname + "'");
-				return ps.executeQuery();
-			} catch (SQLException seRs) {
-				String exMsg = "Message from MySQL Database";
-				String exSqlState = "Exception";
-				SQLException mySqlEx = new SQLException(exMsg, exSqlState);
-				seRs.setNextException(mySqlEx);
-				throw seRs;
-			}
-		} catch (SQLException se) {
-			log.error("Code: " + se.getErrorCode());
-			log.error("SqlState: " + se.getSQLState());
-			log.error("Error Message: " + se.getMessage());
-			se = se.getNextException();
+			ps = ConexionBBDD.getConn().prepareStatement(
+					"SELECT nickname, nombreCompleto, pais, fechaNacimiento, correo, fechaAlta from Usuarios where nickname='"
+							+ nickname + "'");
+			return ps.executeQuery();
+		} catch (SQLException seRs) {
+			log.error("Code: " + seRs.getErrorCode());
+			log.error("SqlState: " + seRs.getSQLState());
+			log.error("Error Message: " + seRs.getMessage());
 			return null;
 		}
 	}
@@ -109,25 +82,16 @@ public class SentenciasSQL {
 	public static int borrarPublicacion(String pub, String nickname) {
 		PreparedStatement ps = null;
 		try {
-			try {
-				ps = ConexionBBDD.getConn().prepareStatement("delete from Publicaciones where propietario='" + nickname
-						+ "' and idPublicacion='" + pub + "'");
+			ps = ConexionBBDD.getConn().prepareStatement(
+					"delete from Publicaciones where propietarioa='" + nickname + "' and idPublicacion='" + pub + "'");
 
-				return ps.executeUpdate();
+			return ps.executeUpdate();
 
-			} catch (SQLException seRs) {
-				String exMsg = "Message from MySQL Database";
-				String exSqlState = "Exception";
-				SQLException mySqlEx = new SQLException(exMsg, exSqlState);
-				seRs.setNextException(mySqlEx);
-				throw seRs;
-			}
-		} catch (SQLException se) {
-			log.error("Code: " + se.getErrorCode());
-			log.error("SqlState: " + se.getSQLState());
-			log.error("Error Message: " + se.getMessage());
-			se = se.getNextException();
-			return -1;
+		} catch (SQLException seRs) {
+			log.error("Code: " + seRs.getErrorCode());
+			log.error("SqlState: " + seRs.getSQLState());
+			log.error("Error Message: " + seRs.getMessage());
+			return seRs.getErrorCode();
 		}
 	}
 
@@ -135,39 +99,30 @@ public class SentenciasSQL {
 			String tweet) {
 		PreparedStatement ps = null;
 		try {
-			try {
-				ps = ConexionBBDD.getConn().prepareStatement(
-						"insert into Publicaciones (idPublicacion, fechaPublicacion, propietario, tweet) "
-								+ "values (?,?,?,?)");
-				ps.setString(1, idPublicacion);
+			ps = ConexionBBDD.getConn()
+					.prepareStatement("insert into Publicaciones (idPublicacion, fechaPublicacion, propietario, tweet) "
+							+ "values (?,?,?,?)");
+			ps.setString(1, idPublicacion);
 
-				if (fechaPublicacion != null)
-					ps.setString(2, fechaPublicacion);
-				else
-					ps.setString(2, "");
+			if (fechaPublicacion != null)
+				ps.setString(2, fechaPublicacion);
+			else
+				ps.setString(2, "");
 
-				ps.setString(3, propietario);
+			ps.setString(3, propietario);
 
-				if (tweet != null)
-					ps.setString(4, tweet);
-				else
-					ps.setString(4, "");
+			if (tweet != null)
+				ps.setString(4, tweet);
+			else
+				ps.setString(4, "");
 
-				return ps.executeUpdate();
+			return ps.executeUpdate();
 
-			} catch (SQLException seRs) {
-				String exMsg = "Message from MySQL Database";
-				String exSqlState = "Exception";
-				SQLException mySqlEx = new SQLException(exMsg, exSqlState);
-				seRs.setNextException(mySqlEx);
-				throw seRs;
-			}
-		} catch (SQLException se) {
-			log.error("Code: " + se.getErrorCode());
-			log.error("SqlState: " + se.getSQLState());
-			log.error("Error Message: " + se.getMessage());
-			se = se.getNextException();
-			return 0;
+		} catch (SQLException seRs) {
+			log.error("Code: " + seRs.getErrorCode());
+			log.error("SqlState: " + seRs.getSQLState());
+			log.error("Error Message: " + seRs.getMessage());
+			return seRs.getErrorCode();
 		}
 	}
 }
