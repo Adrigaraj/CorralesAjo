@@ -125,4 +125,19 @@ public class SentenciasSQL {
 			return seRs.getErrorCode();
 		}
 	}
+
+	public static ResultSet selectPublicaciones(String nickname) {
+		String sql = "SELECT idPublicacion,propietario,fechaPublicacion,tweet FROM Publicaciones where propietario='"
+				+ nickname + "'";
+		PreparedStatement ps = null;
+		try {
+			ps = ConexionBBDD.getConn().prepareStatement(sql);
+			return ps.executeQuery();
+		} catch (SQLException seRs) {
+			log.error("Code: " + seRs.getErrorCode());
+			log.error("SqlState: " + seRs.getSQLState());
+			log.error("Error Message: " + seRs.getMessage());
+			return null;
+		}
+	}
 }
