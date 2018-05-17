@@ -83,7 +83,7 @@ public class SentenciasSQL {
 		PreparedStatement ps = null;
 		try {
 			ps = ConexionBBDD.getConn().prepareStatement(
-					"delete from Publicaciones where propietarioa='" + nickname + "' and idPublicacion='" + pub + "'");
+					"delete from Publicaciones where propietario='" + nickname + "' and idPublicacion='" + pub + "'");
 
 			return ps.executeUpdate();
 
