@@ -81,7 +81,9 @@ public class Publicaciones {
 	@Path("{nickname}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String buscarPublicaciones(@PathParam("nickname") String nickname, @HeaderParam("fecha1") String fecha1,
-			@HeaderParam("fecha1") String fecha2) {
+			@HeaderParam("fecha2") String fecha2, @HeaderParam("user") String user) {
+		if (user != null)
+			nickname = user;
 		log.debug("Petición recibida en buscarPublicaciones(nickname)");
 		JSONArray objDevolver = new JSONArray();
 		ResultSet rs = null;
