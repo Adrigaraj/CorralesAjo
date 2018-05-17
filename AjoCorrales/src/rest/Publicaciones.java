@@ -1,9 +1,10 @@
 package rest;
 
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -18,7 +19,7 @@ import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.JAXBElement;
 
 import org.apache.log4j.Logger;
-import org.json.JSONObject;
+import org.json.JSONArray;
 
 import bbdd.SentenciasSQL;
 import javassist.bytecode.stackmap.TypeData.ClassName;
@@ -67,7 +68,6 @@ public class Publicaciones {
 			return new AppResponse(Status.BAD_REQUEST, "Campos ifPublicacion o propietario vacíos", null).toJtoString();
 
 		int deleted = SentenciasSQL.borrarPublicacion(idPubli, nickname);
-		System.out.println(deleted);
 		if (deleted == 1)
 			return new AppResponse(Status.OK, null, "Objeto borrado correctamente").toJtoString();
 		if (deleted == 0)
@@ -80,33 +80,34 @@ public class Publicaciones {
 	@GET
 	@Path("{nickname}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response buscarPublicaciones(@PathParam("nickname") String nickname, @HeaderParam("fecha1") String fecha1,
+	public String buscarPublicaciones(@PathParam("nickname") String nickname, @HeaderParam("fecha1") String fecha1,
 			@HeaderParam("fecha1") String fecha2) {
 		log.debug("Petición recibida en buscarPublicaciones(nickname)");
-		JSONObject objDevolver = new JSONObject();
+		JSONArray objDevolver = new JSONArray();
 		ResultSet rs = null;
-		if (nickname == null || nickname.equals(""))
-			objDevolver.put("error", "El campo nickname está vacío");
-		else
-			try {
-				Date date1 = new SimpleDateFormat("dd-MM-yyyy").parse(fecha1);
-				Date date2 = new SimpleDateFormat("dd-MM-yyyy").parse(fecha2);
+		if (nickname == null || nickname.equals("")) {
+			return new AppResponse(Status.BAD_REQUEST, "No nick metido ", null).toJtoString();
+		}
+		try {
+			Date date1 = new SimpleDateFormat("dd/MM/yyyy").parse(fecha1);
+			Date date2 = new SimpleDateFormat("dd/MM/yyyy").parse(fecha2);
 
-				rs = SentenciasSQL.selectPublicaciones(nickname);
-				int i = 1;
-				while (rs.next()) {
-					Publicacion pub = new Publicacion(rs.getString("idPublicacion"), rs.getString("propietario"),
-							rs.getString("fechaPublicacion"), rs.getString("tweet"));
-					Date fechPub = new SimpleDateFormat("dd-MM-yyyy").parse(pub.getFechaPublicacion());
-					if (fechPub.after(date1) && fechPub.before(date2)) {
-						objDevolver.put("Publicacion " + i, pub.toJSON());
-						i++;
-					}
+			rs = SentenciasSQL.selectPublicaciones(nickname);
+			while (rs != null && rs.next()) {
+				Publicacion pub = new Publicacion(rs.getString("idPublicacion"), rs.getString("fechaPublicacion"),
+						rs.getString("propietario"), rs.getString("tweet"));
+				Date fechPub = new SimpleDateFormat("dd/MM/yyyy").parse(pub.getFechaPublicacion());
+				if (fechPub.after(date1) && fechPub.before(date2)) {
+					objDevolver.put(pub.toJSON());
 				}
-			} catch (SQLException e) {
-				log.error(e.getMessage() + e.getStackTrace());
-				objDevolver.put("error", "Error al ejecutar sentencia SQL");
 			}
-		return Response.status(400).build();
+			return new AppResponseJSONValue(Status.OK, null, objDevolver).toJtoString();
+		} catch (SQLException e) {
+			log.error(e.getMessage() + e.getStackTrace());
+			return new AppResponse(Status.BAD_REQUEST, "Código error: " + e.getErrorCode(), null).toJtoString();
+		} catch (ParseException e) {
+			log.error(e.getMessage() + e.getStackTrace());
+			return new AppResponse(Status.BAD_REQUEST, "Formato fecha no aceptado", null).toJtoString();
+		}
 	}
 }
