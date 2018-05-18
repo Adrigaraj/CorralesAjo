@@ -203,4 +203,19 @@ public class SentenciasSQL {
 			return null;
 		}
 	}
+
+	public static int borrarPerfil(String nickname) {
+		PreparedStatement ps = null;
+		try {
+			ps = ConexionBBDD.getConn().prepareStatement("delete from Usuarios where nickname='" + nickname + "'");
+
+			return ps.executeUpdate();
+
+		} catch (SQLException seRs) {
+			log.error("Code: " + seRs.getErrorCode());
+			log.error("SqlState: " + seRs.getSQLState());
+			log.error("Error Message: " + seRs.getMessage());
+			return seRs.getErrorCode();
+		}
+	}
 }

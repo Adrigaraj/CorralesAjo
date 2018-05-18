@@ -208,4 +208,23 @@ public class Usuarios {
 		}
 
 	}
+
+	@DELETE
+	@Path("/{nickname}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String borrarPerfil(@PathParam("nickname") String nickname) {
+		log.debug("Petición recibida en borrarPerfil(nickname)");
+		if (nickname == null)
+			return new AppResponse(Status.BAD_REQUEST, "Campo nickname vacío", null).toJtoString();
+
+		int deleted1 = SentenciasSQL.borrarPerfil(nickname);
+
+		if (deleted1 == 1)
+			return new AppResponse(Status.OK, null, "Objeto borrado correctamente").toJtoString();
+		if (deleted1 == 0)
+			return new AppResponse(Status.NO_CONTENT, "El nickname no se han encontrado en la BBDD", null)
+					.toJtoString();
+		else
+			return new AppResponse(Status.BAD_REQUEST, "Código error: " + deleted1, null).toJtoString();
+	}
 }
