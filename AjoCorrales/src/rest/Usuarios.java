@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -184,7 +183,7 @@ public class Usuarios {
 	@GET
 	@Path("/{nickname}/{amigo}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String buscarAmigos(@PathParam("nickname") String nickname, @HeaderParam("amigo") String patron) {
+	public String buscarAmigos(@PathParam("nickname") String nickname, @PathParam("amigo") String patron) {
 
 		log.debug("Petición recibida en buscarAmigos(nickname)");
 		JSONArray objDevolver = new JSONArray();
