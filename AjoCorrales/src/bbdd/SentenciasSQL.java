@@ -221,6 +221,7 @@ public class SentenciasSQL {
 
 	public static ResultSet buscarEstadosContenido(String patron) {
 		String sql = "select * from Publicaciones where tweet like '%" + patron + "%'";
+		// select * from Publicaciones where tweet like '%numero%' and propietario <> 'Alba1';
 		PreparedStatement ps = null;
 		try {
 			ps = ConexionBBDD.getConn().prepareStatement(sql);
