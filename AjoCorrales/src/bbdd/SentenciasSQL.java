@@ -218,4 +218,18 @@ public class SentenciasSQL {
 			return seRs.getErrorCode();
 		}
 	}
+
+	public static ResultSet buscarEstadosContenido(String patron) {
+		String sql = "select * from Publicaciones where tweet like '%" + patron + "%'";
+		PreparedStatement ps = null;
+		try {
+			ps = ConexionBBDD.getConn().prepareStatement(sql);
+			return ps.executeQuery();
+		} catch (SQLException seRs) {
+			log.error("Code: " + seRs.getErrorCode());
+			log.error("SqlState: " + seRs.getSQLState());
+			log.error("Error Message: " + seRs.getMessage());
+			return null;
+		}
+	}
 }

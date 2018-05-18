@@ -227,4 +227,34 @@ public class Usuarios {
 		else
 			return new AppResponse(Status.BAD_REQUEST, "Código error: " + deleted1, null).toJtoString();
 	}
+
+	@GET
+	@Path("/{nickname}/amigos/{publicaciones}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String buscarEstadosContenido(@PathParam("nickname") String nickname,
+			@PathParam("publicaciones") String patron) {
+
+		log.debug("Petición recibida en buscarEstadosContenido(nickname)");
+		JSONArray objDevolver = new JSONArray();
+		ResultSet rs = null;
+		if (nickname == null || nickname.equals("") || patron.equals("") || patron == null) {
+			return new AppResponse(Status.BAD_REQUEST, "No nick metido o no patron metido", null).toJtoString();
+		}
+		try {
+
+			rs = SentenciasSQL.buscarEstadosContenido(patron);
+			while (rs != null && rs.next()) {
+				Publicacion pub = new Publicacion(rs.getString("idPublicacion"), rs.getString("fechaPublicacion"),
+						rs.getString("propietario"), rs.getString("tweet"));
+
+				objDevolver.put(pub.toJSON());
+
+			}
+			return new AppResponseJSONValue(Status.OK, null, objDevolver).toJtoString();
+		} catch (SQLException e) {
+			log.error(e.getMessage() + e.getStackTrace());
+			return new AppResponse(Status.BAD_REQUEST, "Código error: " + e.getErrorCode(), null).toJtoString();
+		}
+
+	}
 }
