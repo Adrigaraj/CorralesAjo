@@ -140,4 +140,67 @@ public class SentenciasSQL {
 			return null;
 		}
 	}
+
+	public static int agregarAmigo(String nickname, String nickAmigo) {
+		PreparedStatement ps = null;
+		try {
+			ps = ConexionBBDD.getConn().prepareStatement("insert into Amigos (nickname, nickAmigo) " + "values(?,?)");
+			ps.setString(1, nickname);
+
+			ps.setString(2, nickAmigo);
+
+			return ps.executeUpdate();
+
+		} catch (SQLException seRs) {
+			log.error("Code: " + seRs.getErrorCode());
+			log.error("SqlState: " + seRs.getSQLState());
+			log.error("Error Message: " + seRs.getMessage());
+			return seRs.getErrorCode();
+		}
+	}
+
+	public static int borrarAmigo(String nickamigo, String nickname) {
+		PreparedStatement ps = null;
+		try {
+			ps = ConexionBBDD.getConn().prepareStatement(
+					"delete from Amigos where nickname='" + nickname + "' and nickamigo='" + nickamigo + "'");
+
+			return ps.executeUpdate();
+
+		} catch (SQLException seRs) {
+			log.error("Code: " + seRs.getErrorCode());
+			log.error("SqlState: " + seRs.getSQLState());
+			log.error("Error Message: " + seRs.getMessage());
+			return seRs.getErrorCode();
+		}
+	}
+
+	public static ResultSet selectAmigos(String nickname) {
+		String sql = "select * from Usuarios where nickname in (select nickAmigo from Amigos where nickname ='"
+				+ nickname + "')";
+		PreparedStatement ps = null;
+		try {
+			ps = ConexionBBDD.getConn().prepareStatement(sql);
+			return ps.executeQuery();
+		} catch (SQLException seRs) {
+			log.error("Code: " + seRs.getErrorCode());
+			log.error("SqlState: " + seRs.getSQLState());
+			log.error("Error Message: " + seRs.getMessage());
+			return null;
+		}
+	}
+
+	public static ResultSet buscarAmigos(String patron) {
+		String sql = "select * from Usuarios where nickname like '%" + patron + "%'";
+		PreparedStatement ps = null;
+		try {
+			ps = ConexionBBDD.getConn().prepareStatement(sql);
+			return ps.executeQuery();
+		} catch (SQLException seRs) {
+			log.error("Code: " + seRs.getErrorCode());
+			log.error("SqlState: " + seRs.getSQLState());
+			log.error("Error Message: " + seRs.getMessage());
+			return null;
+		}
+	}
 }

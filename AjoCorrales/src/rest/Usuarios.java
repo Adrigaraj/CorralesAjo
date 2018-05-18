@@ -5,7 +5,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -105,4 +107,106 @@ public class Usuarios {
 			return new AppResponse(Status.BAD_REQUEST, "Código error: " + inserted, null).toJtoString();
 	}
 
+	@POST
+	@Path("/{nickname}/amigos")
+	@Consumes(MediaType.APPLICATION_XML)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String agregarAmigo(@PathParam("nickname") String nickname, JAXBElement<Usuario> user) {
+		log.debug("Petición recibida en agregarAmigo(user)");
+		int inserted1 = 0;
+		int inserted2 = 0;
+		Usuario amigo = user.getValue();
+		try {
+			String nickAmigo = amigo.getNickname();
+
+			if (nickname == null && nickAmigo == null)
+				return new AppResponse(Status.OK, "Error al obtener el usuario", null).toJtoString();
+			inserted1 = SentenciasSQL.agregarAmigo(nickname, nickAmigo);
+			inserted2 = SentenciasSQL.agregarAmigo(nickAmigo, nickname);
+		} catch (NumberFormatException e) {
+			log.error(e.getMessage() + e.getStackTrace());
+			return new AppResponse(Status.OK, "Error al obtener el usuario", null).toJtoString();
+		}
+		if (inserted1 == 1 && inserted2 == 1)
+			return new AppResponse(Status.CREATED, null, user.toString()).toJtoString();
+		if (inserted1 == 1062 || inserted2 == 1062)
+			return new AppResponse(Status.BAD_REQUEST, "Ya son amigos", null).toJtoString();
+		if (inserted1 == 1452 || inserted2 == 1452)
+			return new AppResponse(Status.BAD_REQUEST, "Alguno de los dos no esta en la BBDD", null).toJtoString();
+		else
+			return new AppResponse(Status.BAD_REQUEST, "Código error: " + inserted1, null).toJtoString();
+	}
+
+	@DELETE
+	@Path("/{nickname}/{nickamigo}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String borrarAmigo(@PathParam("nickname") String nickname, @PathParam("nickamigo") String nickamigo) {
+		log.debug("Petición recibida en borrarAmigo(nickname, nickamigo)");
+		if (nickamigo == null || nickname == null)
+			return new AppResponse(Status.BAD_REQUEST, "Campos nickamigo o nickname vacíos", null).toJtoString();
+
+		int deleted1 = SentenciasSQL.borrarAmigo(nickamigo, nickname);
+		int deleted2 = SentenciasSQL.borrarAmigo(nickname, nickamigo);
+		if (deleted1 == 1 && deleted2 == 1)
+			return new AppResponse(Status.OK, null, "Objeto borrado correctamente").toJtoString();
+		if (deleted1 == 0 || deleted2 == 0)
+			return new AppResponse(Status.NO_CONTENT, "El nickname o el nickamigo no se han encontrado en la BBDD",
+					null).toJtoString();
+		else
+			return new AppResponse(Status.BAD_REQUEST, "Código error: " + deleted1, null).toJtoString();
+	}
+
+	@GET
+	@Path("/{nickname}/amigos")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getAmigos(@PathParam("nickname") String nickname) {
+		log.debug("Petición recibida en getAmigos()");
+		JSONArray objDevolver = new JSONArray();
+		ResultSet rs = null;
+		Usuario user = null;
+		try {
+			rs = SentenciasSQL.selectAmigos(nickname);
+			if (rs != null)
+				while (rs.next()) {
+					user = new Usuario(rs.getString("nickname"), rs.getString("nombreCompleto"), rs.getString("pais"),
+							rs.getString("fechaNacimiento"), rs.getString("correo"), rs.getString("fechaAlta"));
+					objDevolver.put(user.toJSON());
+				}
+			if (user != null)
+				return new AppResponseJSONValue(Status.OK, null, objDevolver).toJtoString();
+		} catch (NumberFormatException | SQLException e) {
+			log.error(e.getMessage() + e.getStackTrace());
+			return new AppResponseJSONValue(Status.OK, "Error al obtener los usuarios", null).toJtoString();
+		}
+		return new AppResponseJSONValue(Status.OK, "Error al obtener los usuarios", null).toJtoString();
+	}
+
+	@GET
+	@Path("/{nickname}/{amigo}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String buscarAmigos(@PathParam("nickname") String nickname, @HeaderParam("amigo") String patron) {
+
+		log.debug("Petición recibida en buscarAmigos(nickname)");
+		JSONArray objDevolver = new JSONArray();
+		ResultSet rs = null;
+		if (nickname == null || nickname.equals("") || patron.equals("") || patron == null) {
+			return new AppResponse(Status.BAD_REQUEST, "No nick metido o no patron metido", null).toJtoString();
+		}
+		try {
+
+			rs = SentenciasSQL.buscarAmigos(patron);
+			while (rs != null && rs.next()) {
+				Usuario us = new Usuario(rs.getString("nickname"), rs.getString("nombreCompleto"), rs.getString("pais"),
+						rs.getString("fechaNacimiento"), rs.getString("correo"), rs.getString("fechaAlta"));
+
+				objDevolver.put(us.toJSON());
+
+			}
+			return new AppResponseJSONValue(Status.OK, null, objDevolver).toJtoString();
+		} catch (SQLException e) {
+			log.error(e.getMessage() + e.getStackTrace());
+			return new AppResponse(Status.BAD_REQUEST, "Código error: " + e.getErrorCode(), null).toJtoString();
+		}
+
+	}
 }

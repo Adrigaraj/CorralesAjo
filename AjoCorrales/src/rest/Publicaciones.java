@@ -65,7 +65,7 @@ public class Publicaciones {
 	public String borrarPublicacion(@PathParam("nickname") String nickname, @PathParam("idPubli") String idPubli) {
 		log.debug("Petición recibida en borrarPublicacion(nickname, idPubli)");
 		if (idPubli == null || nickname == null)
-			return new AppResponse(Status.BAD_REQUEST, "Campos ifPublicacion o propietario vacíos", null).toJtoString();
+			return new AppResponse(Status.BAD_REQUEST, "Campos idPublicacion o propietario vacíos", null).toJtoString();
 
 		int deleted = SentenciasSQL.borrarPublicacion(idPubli, nickname);
 		if (deleted == 1)
