@@ -43,11 +43,13 @@ public class Usuarios {
 				}
 			if (user != null)
 				return new AppResponseJSONValue(Status.OK, null, objDevolver).toJtoString();
-		} catch (NumberFormatException | SQLException e) {
-			log.error(e.getMessage() + e.getStackTrace());
-			return new AppResponseJSONValue(Status.OK, "Error al obtener los usuarios", null).toJtoString();
+		} catch (SQLException e) {
+			log.error("Error SQL: " + e.getErrorCode() + ". " + e.getMessage() + e.getStackTrace());
+			return new AppResponseJSONValue(Status.INTERNAL_SERVER_ERROR, "Error al obtener los usuarios", null)
+					.toJtoString();
 		}
-		return new AppResponseJSONValue(Status.OK, "Error al obtener los usuarios", null).toJtoString();
+		return new AppResponseJSONValue(Status.OK, "No se han podido obtener usuarios. Puede que la BBDD esté vacía.",
+				null).toJtoString();
 	}
 
 	@GET
@@ -70,10 +72,10 @@ public class Usuarios {
 				return new AppResponseJSONValue(Status.OK, null, objDevolver).toJtoString();
 			}
 		} catch (SQLException e) {
-			log.error(e.getMessage() + e.getStackTrace());
-			return new AppResponse(Status.OK, "Error al obtener los usuarios", null).toJtoString();
+			log.error("Error SQL: " + e.getErrorCode() + ". " + e.getMessage() + e.getStackTrace());
+			return new AppResponse(Status.INTERNAL_SERVER_ERROR, "Error al obtener el usuario.", null).toJtoString();
 		}
-		return new AppResponse(Status.OK, "Error al obtener el usuario", null).toJtoString();
+		return new AppResponse(Status.BAD_REQUEST, "No se ha encontrado el usuario", null).toJtoString();
 	}
 
 	@POST
@@ -82,19 +84,16 @@ public class Usuarios {
 	public String insertarUsuario(JAXBElement<Usuario> user) {
 		log.debug("Petición recibida en insertarUsuario(user)");
 		int inserted = 0;
+
 		Usuario us = user.getValue();
-		try {
-			String nickname = us.getNickname();
-			String fechaAlta = new Date(new java.util.Date().getTime()).toString();
-			us.setFechaAlta(fechaAlta);
-			if (nickname == null)
-				return new AppResponse(Status.OK, "Error al obtener el usuario", null).toJtoString();
-			inserted = SentenciasSQL.insertUsuario(nickname, us.getNombreCompleto(), us.getPais(),
-					us.getFechaNacimiento(), us.getCorreo(), fechaAlta);
-		} catch (NumberFormatException e) {
-			log.error(e.getMessage() + e.getStackTrace());
+		String nickname = us.getNickname();
+		String fechaAlta = new Date(new java.util.Date().getTime()).toString();
+		us.setFechaAlta(fechaAlta);
+		if (nickname == null)
 			return new AppResponse(Status.OK, "Error al obtener el usuario", null).toJtoString();
-		}
+		inserted = SentenciasSQL.insertUsuario(nickname, us.getNombreCompleto(), us.getPais(), us.getFechaNacimiento(),
+				us.getCorreo(), fechaAlta);
+
 		if (inserted == 1)
 			return new AppResponse(Status.CREATED, null, us.toString()).toJtoString();
 		if (inserted == 1062)
@@ -116,17 +115,14 @@ public class Usuarios {
 		int inserted1 = 0;
 		int inserted2 = 0;
 		Usuario amigo = user.getValue();
-		try {
-			String nickAmigo = amigo.getNickname();
 
-			if (nickname == null && nickAmigo == null)
-				return new AppResponse(Status.OK, "Error al obtener el usuario", null).toJtoString();
-			inserted1 = SentenciasSQL.agregarAmigo(nickname, nickAmigo);
-			inserted2 = SentenciasSQL.agregarAmigo(nickAmigo, nickname);
-		} catch (NumberFormatException e) {
-			log.error(e.getMessage() + e.getStackTrace());
-			return new AppResponse(Status.OK, "Error al obtener el usuario", null).toJtoString();
-		}
+		String nickAmigo = amigo.getNickname();
+
+		if (nickname == null && nickAmigo == null)
+			return new AppResponse(Status.BAD_REQUEST, "Error al obtener el usuario", null).toJtoString();
+		inserted1 = SentenciasSQL.agregarAmigo(nickname, nickAmigo);
+		inserted2 = SentenciasSQL.agregarAmigo(nickAmigo, nickname);
+
 		if (inserted1 == 1 && inserted2 == 1)
 			return new AppResponse(Status.CREATED, null, user.toString()).toJtoString();
 		if (inserted1 == 1062 || inserted2 == 1062)
@@ -148,9 +144,9 @@ public class Usuarios {
 		int deleted1 = SentenciasSQL.borrarAmigo(nickamigo, nickname);
 		int deleted2 = SentenciasSQL.borrarAmigo(nickname, nickamigo);
 		if (deleted1 == 1 && deleted2 == 1)
-			return new AppResponse(Status.OK, null, "Objeto borrado correctamente").toJtoString();
+			return new AppResponse(Status.OK, null, "Amigo borrado correctamente").toJtoString();
 		if (deleted1 == 0 || deleted2 == 0)
-			return new AppResponse(Status.NO_CONTENT, "El nickname o el nickamigo no se han encontrado en la BBDD",
+			return new AppResponse(Status.BAD_REQUEST, "El nickname o el nickamigo no se han encontrado en la BBDD",
 					null).toJtoString();
 		else
 			return new AppResponse(Status.BAD_REQUEST, "Código error: " + deleted1, null).toJtoString();
@@ -174,11 +170,13 @@ public class Usuarios {
 				}
 			if (user != null)
 				return new AppResponseJSONValue(Status.OK, null, objDevolver).toJtoString();
-		} catch (NumberFormatException | SQLException e) {
-			log.error(e.getMessage() + e.getStackTrace());
-			return new AppResponseJSONValue(Status.OK, "Error al obtener los usuarios", null).toJtoString();
+		} catch (SQLException e) {
+			log.error("Error SQL: " + e.getErrorCode() + ". " + e.getMessage() + e.getStackTrace());
+			return new AppResponseJSONValue(Status.INTERNAL_SERVER_ERROR,
+					"Error al obtener los usuarios. SQLError: " + e.getErrorCode(), null).toJtoString();
 		}
-		return new AppResponseJSONValue(Status.OK, "Error al obtener los usuarios", null).toJtoString();
+		return new AppResponseJSONValue(Status.BAD_REQUEST,
+				"No se han podido obtener los amigos, comprueba el nickname.", null).toJtoString();
 	}
 
 	@GET
@@ -193,18 +191,16 @@ public class Usuarios {
 			return new AppResponse(Status.BAD_REQUEST, "No nick metido o no patron metido", null).toJtoString();
 		}
 		try {
-
 			rs = SentenciasSQL.buscarAmigos(patron);
 			while (rs != null && rs.next()) {
 				Usuario us = new Usuario(rs.getString("nickname"), rs.getString("nombreCompleto"), rs.getString("pais"),
 						rs.getString("fechaNacimiento"), rs.getString("correo"), rs.getString("fechaAlta"));
 
 				objDevolver.put(us.toJSON());
-
 			}
 			return new AppResponseJSONValue(Status.OK, null, objDevolver).toJtoString();
 		} catch (SQLException e) {
-			log.error(e.getMessage() + e.getStackTrace());
+			log.error("Error SQL: " + e.getErrorCode() + ". " + e.getMessage() + e.getStackTrace());
 			return new AppResponse(Status.BAD_REQUEST, "Código error: " + e.getErrorCode(), null).toJtoString();
 		}
 
@@ -263,23 +259,27 @@ public class Usuarios {
 	@Path("/{nickname}")
 	public String actualizarPerfil(@PathParam("nickname") String nickname, JAXBElement<Usuario> user) {
 		log.debug("Petición recibida en actualizaPerfil");
-		int inserted = 0;
+		int updated = 0;
 		Usuario us = user.getValue();
 		try {
-			nickname = us.getNickname();
 			if (nickname == null)
-				return new AppResponse(Status.OK, "Error al obtener el usuario", null).toJtoString();
-			inserted = SentenciasSQL.actualizarPerfil(nickname, us.getNombreCompleto(), us.getPais(),
+				return new AppResponse(Status.BAD_REQUEST, "Error al obtener el usuario", null).toJtoString();
+			updated = SentenciasSQL.actualizarPerfil(nickname, us.getNombreCompleto(), us.getPais(),
 					us.getFechaNacimiento(), us.getCorreo());
 		} catch (NumberFormatException e) {
 			log.error(e.getMessage() + e.getStackTrace());
-			return new AppResponse(Status.OK, "Error al obtener el usuario", null).toJtoString();
+			return new AppResponse(Status.BAD_REQUEST, "Error: " + e.getMessage() + e.getStackTrace(), null)
+					.toJtoString();
 		}
-		if (inserted == 1)
-			return new AppResponse(Status.CREATED, null, us.toString()).toJtoString();
-		if (inserted == 1452)
-			return new AppResponse(Status.BAD_REQUEST, "Nickname no está dado de alta en la BBDD", null).toJtoString();
+		if (updated == 1) {
+			us.setNickname(nickname);
+			return new AppResponse(Status.OK, null, us.toString()).toJtoString();
+		}
+		if (updated == 0)
+			return new AppResponse(Status.BAD_REQUEST,
+					"No se ha actualizado la BBDD. Comprueba que el nickname esté dado de alta en la BBDD", null)
+							.toJtoString();
 		else
-			return new AppResponse(Status.BAD_REQUEST, "Código error: " + inserted, null).toJtoString();
+			return new AppResponse(Status.BAD_REQUEST, "Error ", null).toJtoString();
 	}
 }

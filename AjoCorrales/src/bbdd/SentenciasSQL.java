@@ -238,10 +238,13 @@ public class SentenciasSQL {
 			String correo) {
 		PreparedStatement ps = null;
 		try {
-			ps = ConexionBBDD.getConn()
-					.prepareStatement("UPDATE Usuarios SET nombreCompleto='" + nombreCompleto + "', pais='" + pais
-							+ "', fechaNacimiento='" + fechaNacimiento + "', correo='" + correo + "' where nickname = '"
-							+ nickname + "'");
+			ps = ConexionBBDD.getConn().prepareStatement(
+					"UPDATE Usuarios SET nombreCompleto=?, pais=?, fechaNacimiento=?, correo=? where nickname = ?");
+			ps.setString(1, nombreCompleto);
+			ps.setString(2, pais);
+			ps.setString(3, fechaNacimiento);
+			ps.setString(4, correo);
+			ps.setString(5, nickname);
 
 			return ps.executeUpdate();
 
