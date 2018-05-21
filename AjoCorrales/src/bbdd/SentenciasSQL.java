@@ -233,4 +233,23 @@ public class SentenciasSQL {
 			return null;
 		}
 	}
+
+	public static int actualizarPerfil(String nickname, String nombreCompleto, String pais, String fechaNacimiento,
+			String correo) {
+		PreparedStatement ps = null;
+		try {
+			ps = ConexionBBDD.getConn()
+					.prepareStatement("UPDATE Usuarios SET nombreCompleto='" + nombreCompleto + "', pais='" + pais
+							+ "', fechaNacimiento='" + fechaNacimiento + "', correo='" + correo + "' where nickname = '"
+							+ nickname + "'");
+
+			return ps.executeUpdate();
+
+		} catch (SQLException seRs) {
+			log.error("Code: " + seRs.getErrorCode());
+			log.error("SqlState: " + seRs.getSQLState());
+			log.error("Error Message: " + seRs.getMessage());
+			return seRs.getErrorCode();
+		}
+	}
 }

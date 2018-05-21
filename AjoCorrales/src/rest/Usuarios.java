@@ -8,6 +8,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -256,5 +257,29 @@ public class Usuarios {
 			return new AppResponse(Status.BAD_REQUEST, "Código error: " + e.getErrorCode(), null).toJtoString();
 		}
 
+	}
+
+	@PUT
+	@Path("/{nickname}")
+	public String actualizarPerfil(@PathParam("nickname") String nickname, JAXBElement<Usuario> user) {
+		log.debug("Petición recibida en actualizaPerfil");
+		int inserted = 0;
+		Usuario us = user.getValue();
+		try {
+			nickname = us.getNickname();
+			if (nickname == null)
+				return new AppResponse(Status.OK, "Error al obtener el usuario", null).toJtoString();
+			inserted = SentenciasSQL.actualizarPerfil(nickname, us.getNombreCompleto(), us.getPais(),
+					us.getFechaNacimiento(), us.getCorreo());
+		} catch (NumberFormatException e) {
+			log.error(e.getMessage() + e.getStackTrace());
+			return new AppResponse(Status.OK, "Error al obtener el usuario", null).toJtoString();
+		}
+		if (inserted == 1)
+			return new AppResponse(Status.CREATED, null, us.toString()).toJtoString();
+		if (inserted == 1452)
+			return new AppResponse(Status.BAD_REQUEST, "Nickname no está dado de alta en la BBDD", null).toJtoString();
+		else
+			return new AppResponse(Status.BAD_REQUEST, "Código error: " + inserted, null).toJtoString();
 	}
 }
