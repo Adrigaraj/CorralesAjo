@@ -242,7 +242,7 @@ public class Usuarios {
 		}
 		try {
 
-			rs = SentenciasSQL.buscarEstadosContenido(patron);
+			rs = SentenciasSQL.buscarEstadosContenido(patron, nickname);
 			while (rs != null && rs.next()) {
 				Publicacion pub = new Publicacion(rs.getString("idPublicacion"), rs.getString("fechaPublicacion"),
 						rs.getString("propietario"), rs.getString("tweet"));

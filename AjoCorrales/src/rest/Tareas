@@ -18,7 +18,7 @@ YA(queda filtrar) • Obtener una lista de todos nuestros amigos y filtrar esa l
 YA • Borrar nuestro perfil de la red social
 • Consultar los últimos estados de nuestros amigos: obtener una lista de los
 		últimos estados de todos mis amigos, pudiendo filtrar estos estados por fecha
-YA (a medias)• Buscar en todos los estados de nuestros amigos por contenido –contiene un
+YA (limitar cantidad info)• Buscar en todos los estados de nuestros amigos por contenido –contiene un
 		determinado texto-. Poder limitar la cantidad de información obtenida por
 		número de estados (e.g. los 10 primeros elementos, los elementos entre el 11 y
 		el 20, etc.).

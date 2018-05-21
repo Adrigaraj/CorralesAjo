@@ -219,9 +219,9 @@ public class SentenciasSQL {
 		}
 	}
 
-	public static ResultSet buscarEstadosContenido(String patron) {
-		String sql = "select * from Publicaciones where tweet like '%" + patron + "%'";
-		// select * from Publicaciones where tweet like '%numero%' and propietario <> 'Alba1';
+	public static ResultSet buscarEstadosContenido(String patron, String nickname) {
+		String sql = "select * from Publicaciones where tweet like '%" + patron + "%' and propietario != '" + nickname
+				+ "'";
 		PreparedStatement ps = null;
 		try {
 			ps = ConexionBBDD.getConn().prepareStatement(sql);
