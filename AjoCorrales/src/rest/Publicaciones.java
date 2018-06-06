@@ -95,14 +95,16 @@ public class Publicaciones {
 			Date date2 = new SimpleDateFormat("dd/MM/yyyy").parse(fecha2);
 
 			rs = SentenciasSQL.selectPublicaciones(nickname);
-			while (rs != null && rs.next()) {
+			if (!rs.next())
+				return new AppResponse(Status.BAD_REQUEST, "No se han encontrado publicaciones", null).toJtoString();
+			do {
 				Publicacion pub = new Publicacion(rs.getString("idPublicacion"), rs.getString("fechaPublicacion"),
 						rs.getString("propietario"), rs.getString("tweet"));
 				Date fechPub = new SimpleDateFormat("dd/MM/yyyy").parse(pub.getFechaPublicacion());
 				if (fechPub.after(date1) && fechPub.before(date2)) {
 					objDevolver.put(pub.toJSON());
 				}
-			}
+			} while (rs != null && rs.next());
 			return new AppResponseJSONValue(Status.OK, null, objDevolver).toJtoString();
 		} catch (SQLException e) {
 			log.error(e.getMessage() + e.getStackTrace());

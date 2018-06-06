@@ -207,6 +207,12 @@ public class SentenciasSQL {
 	public static int borrarPerfil(String nickname) {
 		PreparedStatement ps = null;
 		try {
+			ConexionBBDD.getConn().prepareStatement("delete from Amigos where nickname='" + nickname + "'")
+					.executeUpdate();
+			ConexionBBDD.getConn().prepareStatement("delete from Amigos where nickamigo='" + nickname + "'")
+					.executeUpdate();
+			ConexionBBDD.getConn().prepareStatement("delete from Publicaciones where propietario='" + nickname + "'")
+					.executeUpdate();
 			ps = ConexionBBDD.getConn().prepareStatement("delete from Usuarios where nickname='" + nickname + "'");
 
 			return ps.executeUpdate();
