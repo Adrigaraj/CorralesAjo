@@ -2,6 +2,7 @@ package rest;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -38,7 +39,8 @@ public class Publicaciones {
 		int inserted = 0;
 
 		String idPublicacion = pub.getIdPublicacion();
-		String fechaPublicacion = new Date(new java.util.Date().getTime()).toString();
+		DateFormat fechaPub = new SimpleDateFormat("dd/MM/yyyy");
+		String fechaPublicacion = fechaPub.format(new Date());
 		pub.setFechaPublicacion(fechaPublicacion);
 		String propietario = nickname;
 
