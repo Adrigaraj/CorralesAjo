@@ -96,11 +96,8 @@ public class Usuarios {
 		if (inserted == 1)
 			return new AppResponse(Status.CREATED, null, us.toString()).toJtoString();
 		if (inserted == 1062)
-			return new AppResponse(Status.BAD_REQUEST, "Publicación ya introducida, cambie el idPublicacion", null)
+			return new AppResponse(Status.BAD_REQUEST, "Usuario ya introducido, elija otro nickname", null)
 					.toJtoString();
-		if (inserted == 1452)
-			return new AppResponse(Status.BAD_REQUEST,
-					"El propietario de la publicación no está dado de alta en la BBDD", null).toJtoString();
 		else
 			return new AppResponse(Status.BAD_REQUEST, "Código error: " + inserted, null).toJtoString();
 	}
@@ -123,7 +120,7 @@ public class Usuarios {
 		inserted2 = SentenciasSQL.agregarAmigo(nickAmigo, nickname);
 
 		if (inserted1 == 1 && inserted2 == 1)
-			return new AppResponse(Status.CREATED, null, user.toString()).toJtoString();
+			return new AppResponse(Status.CREATED, null, nickAmigo).toJtoString();
 		if (inserted1 == 1062 || inserted2 == 1062)
 			return new AppResponse(Status.BAD_REQUEST, "Ya son amigos", null).toJtoString();
 		if (inserted1 == 1452 || inserted2 == 1452)
@@ -190,7 +187,7 @@ public class Usuarios {
 			return new AppResponse(Status.BAD_REQUEST, "No nick metido o no patron metido", null).toJtoString();
 		}
 		try {
-			rs = SentenciasSQL.buscarAmigos(patron);
+			rs = SentenciasSQL.buscarAmigos(nickname, patron);
 			while (rs != null && rs.next()) {
 				Usuario us = new Usuario(rs.getString("nickname"), rs.getString("nombreCompleto"), rs.getString("pais"),
 						rs.getString("fechaNacimiento"), rs.getString("correo"), rs.getString("fechaAlta"));

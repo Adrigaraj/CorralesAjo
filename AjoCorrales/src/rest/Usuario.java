@@ -1,7 +1,10 @@
 package rest;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.json.JSONObject;
 
+@XmlRootElement
 public class Usuario {
 	private String nickname;
 	private String nombreCompleto;
@@ -11,6 +14,10 @@ public class Usuario {
 	private String fechaAlta;
 
 	public Usuario() {
+	}
+
+	public Usuario(String nickname) {
+		this.nickname = nickname;
 	}
 
 	public Usuario(String nickname, String nombreCompleto) {
@@ -26,6 +33,15 @@ public class Usuario {
 		this.fechaNacimiento = fechaNacimiento;
 		this.correo = correo;
 		this.fechaAlta = fechaAlta;
+	}
+
+	public Usuario(String nickname, String nombreCompleto, String pais, String fechaNacimiento, String correo) {
+		this.nickname = nickname;
+		this.nombreCompleto = nombreCompleto;
+		this.pais = pais;
+		this.fechaNacimiento = fechaNacimiento;
+		this.correo = correo;
+		this.fechaAlta = "";
 	}
 
 	public JSONObject toJSON() {
