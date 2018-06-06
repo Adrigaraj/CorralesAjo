@@ -12,7 +12,7 @@ public class SentenciasSQL {
 	private static final Logger log = Logger.getLogger(ClassName.class.getName());
 
 	public static ResultSet selectUsuarios() {
-		String sql = "SELECT nickname, nombreCompleto, pais, fechaNacimiento, correo, fechaAlta FROM Usuarios order by fechaAlta";
+		String sql = "SELECT nickname, nombreCompleto FROM Usuarios order by fechaAlta";
 		PreparedStatement ps = null;
 		try {
 			ps = ConexionBBDD.getConn().prepareStatement(sql);

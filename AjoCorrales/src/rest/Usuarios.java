@@ -37,8 +37,7 @@ public class Usuarios {
 			rs = SentenciasSQL.selectUsuarios();
 			if (rs != null)
 				while (rs.next()) {
-					user = new Usuario(rs.getString("nickname"), rs.getString("nombreCompleto"), rs.getString("pais"),
-							rs.getString("fechaNacimiento"), rs.getString("correo"), rs.getString("fechaAlta"));
+					user = new Usuario(rs.getString("nickname"), rs.getString("nombreCompleto"));
 					objDevolver.put(user.toJSON());
 				}
 			if (user != null)
