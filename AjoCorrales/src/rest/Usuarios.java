@@ -189,8 +189,7 @@ public class Usuarios {
 		try {
 			rs = SentenciasSQL.buscarAmigos(nickname, patron);
 			while (rs != null && rs.next()) {
-				Usuario us = new Usuario(rs.getString("nickname"), rs.getString("nombreCompleto"), rs.getString("pais"),
-						rs.getString("fechaNacimiento"), rs.getString("correo"), rs.getString("fechaAlta"));
+				Usuario us = new Usuario(rs.getString("nickname"), rs.getString("nombreCompleto"));
 
 				objDevolver.put(us.toJSON());
 			}

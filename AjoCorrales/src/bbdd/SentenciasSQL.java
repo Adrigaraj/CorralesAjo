@@ -191,7 +191,7 @@ public class SentenciasSQL {
 	}
 
 	public static ResultSet buscarAmigos(String nickname, String patron) {
-		String sql = "select * from Usuarios where nickname like '%" + patron
+		String sql = "select nickname,nombreCompleto from Usuarios where nickname like '%" + patron
 				+ "%' and nickname not in (select nickAmigo from Amigos where nickname = '" + nickname
 				+ "') and nickname not in (select nickname from Amigos where nickAmigo = '" + nickname + "')";
 		PreparedStatement ps = null;
