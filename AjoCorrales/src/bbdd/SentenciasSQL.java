@@ -176,7 +176,7 @@ public class SentenciasSQL {
 	}
 
 	public static ResultSet selectAmigos(String nickname) {
-		String sql = "select * from Usuarios where nickname in (select nickAmigo from Amigos where nickname ='"
+		String sql = "select nickname,nombreCompleto from Usuarios where nickname in (select nickAmigo from Amigos where nickname ='"
 				+ nickname + "')";
 		PreparedStatement ps = null;
 		try {
