@@ -149,15 +149,15 @@ public class Usuarios {
 	}
 
 	@GET
-	@Path("/{nickname}/amigos")
+	@Path("/{nickname}/amigos/{amigo}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getAmigos(@PathParam("nickname") String nickname) {
+	public String getAmigos(@PathParam("nickname") String nickname, @PathParam("amigo") String patron) {
 		log.debug("Petición recibida en getAmigos()");
 		JSONArray objDevolver = new JSONArray();
 		ResultSet rs = null;
 		Usuario user = null;
 		try {
-			rs = SentenciasSQL.selectAmigos(nickname);
+			rs = SentenciasSQL.selectAmigos(nickname, patron);
 			if (rs != null)
 				while (rs.next()) {
 					user = new Usuario(rs.getString("nickname"), rs.getString("nombreCompleto"));
@@ -220,7 +220,7 @@ public class Usuarios {
 	}
 
 	@GET
-	@Path("/{nickname}/amigos/{publicaciones}")
+	@Path("/{nickname}/amigos/publicaciones/{publicaciones}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String buscarEstadosContenido(@PathParam("nickname") String nickname,
 			@PathParam("publicaciones") String patron) {

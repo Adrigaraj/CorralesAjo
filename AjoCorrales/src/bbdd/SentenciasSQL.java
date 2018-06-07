@@ -175,9 +175,9 @@ public class SentenciasSQL {
 		}
 	}
 
-	public static ResultSet selectAmigos(String nickname) {
+	public static ResultSet selectAmigos(String nickname, String patron) {
 		String sql = "select nickname,nombreCompleto from Usuarios where nickname in (select nickAmigo from Amigos where nickname ='"
-				+ nickname + "')";
+				+ nickname + "') and nickname like '%" + patron + "%'";
 		PreparedStatement ps = null;
 		try {
 			ps = ConexionBBDD.getConn().prepareStatement(sql);
