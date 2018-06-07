@@ -149,6 +149,32 @@ public class Usuarios {
 	}
 
 	@GET
+	@Path("/{nickname}/amigos")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getAmigos(@PathParam("nickname") String nickname) {
+		log.debug("Petición recibida en getAmigos()");
+		JSONArray objDevolver = new JSONArray();
+		ResultSet rs = null;
+		Usuario user = null;
+		try {
+			rs = SentenciasSQL.selectAmigosSinPatron(nickname);
+			if (rs != null)
+				while (rs.next()) {
+					user = new Usuario(rs.getString("nickname"), rs.getString("nombreCompleto"));
+					objDevolver.put(user.toJSON());
+				}
+			if (user != null)
+				return new AppResponseJSONValue(Status.OK, null, objDevolver).toJtoString();
+		} catch (SQLException e) {
+			log.error("Error SQL: " + e.getErrorCode() + ". " + e.getMessage() + e.getStackTrace());
+			return new AppResponseJSONValue(Status.INTERNAL_SERVER_ERROR,
+					"Error al obtener los usuarios. SQLError: " + e.getErrorCode(), null).toJtoString();
+		}
+		return new AppResponseJSONValue(Status.BAD_REQUEST,
+				"No se han podido obtener los amigos, comprueba el nickname.", null).toJtoString();
+	}
+
+	@GET
 	@Path("/{nickname}/amigos/{amigo}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getAmigos(@PathParam("nickname") String nickname, @PathParam("amigo") String patron) {

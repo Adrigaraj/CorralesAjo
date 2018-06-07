@@ -177,7 +177,22 @@ public class SentenciasSQL {
 
 	public static ResultSet selectAmigos(String nickname, String patron) {
 		String sql = "select nickname,nombreCompleto from Usuarios where nickname in (select nickAmigo from Amigos where nickname ='"
-				+ nickname + "') and nickname like '%" + patron + "%'";
+				+ nickname + "') and nickname like '%" + patron + "%' or nombreCompleto like '%" + patron + "%'";
+		PreparedStatement ps = null;
+		try {
+			ps = ConexionBBDD.getConn().prepareStatement(sql);
+			return ps.executeQuery();
+		} catch (SQLException seRs) {
+			log.error("Code: " + seRs.getErrorCode());
+			log.error("SqlState: " + seRs.getSQLState());
+			log.error("Error Message: " + seRs.getMessage());
+			return null;
+		}
+	}
+
+	public static ResultSet selectAmigosSinPatron(String nickname) {
+		String sql = "select nickname,nombreCompleto from Usuarios where nickname in (select nickAmigo from Amigos where nickname ='"
+				+ nickname + "')";
 		PreparedStatement ps = null;
 		try {
 			ps = ConexionBBDD.getConn().prepareStatement(sql);
