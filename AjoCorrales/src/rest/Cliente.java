@@ -26,8 +26,8 @@ public class Cliente {
 				System.out.println(
 						"USUARIOS: \n   1.Obtener todos los usuarios \n   2.Obtener un usuario determinado \n   3.Añadir un usuario \n   4.Actualizar perfil \n   5.Borrar perfil");
 				System.out.println(
-						"AMIGOS: \n   6.Agregar un amigo \n   7.Borrar un amigo \n   8.Ver mis amigos \n   9.Buscar usuarios por patrón");
-				System.out.println("PUBLICACIONES: \n   10.Buscar publicaciones de un usuario \n   11. ");
+						"AMIGOS: \n   6.Agregar un amigo \n   7.Borrar un amigo \n   8.Ver mis amigos \n   9.Buscar usuarios por patrón \n   10.Buscar mis amigos por patrón");
+				System.out.println("PUBLICACIONES: \n   11.Buscar publicaciones de un usuario \n   12. ");
 				try {
 					i = Integer.parseInt(sc.nextLine());
 				} catch (NumberFormatException e) {
@@ -107,14 +107,18 @@ public class Cliente {
 					System.out.println(imprimirPrettyJson(buscarAmigos(usuario9, patron9)));
 					break;
 				case 10:
-					System.out.println("Introduce el nickname de las publicaciones");
+					System.out.println("Introduce tu nickname");
 					String usuario10 = sc.nextLine();
-					System.out.println("Introduce el patron para filtrar publicaciones");
+					System.out.println("Introduce el patron para buscar usuario");
 					String patron10 = sc.nextLine();
-					System.out.println(imprimirPrettyJson(buscarAmigos(usuario10, patron10)));
+					System.out.println(imprimirPrettyJson(getAmigosPatron(usuario10, patron10)));
 					break;
 				case 11:
-
+					System.out.println("Introduce el nickname de las publicaciones");
+					String usuario11 = sc.nextLine();
+					System.out.println("Introduce el patron para filtrar publicaciones");
+					String patron11 = sc.nextLine();
+					System.out.println(imprimirPrettyJson(buscarpublicaciones(usuario11, patron11)));
 					break;
 				case 12:
 
@@ -144,6 +148,9 @@ public class Cliente {
 
 					break;
 				case 21:
+
+					break;
+				case 22:
 
 					break;
 				default:
@@ -272,6 +279,20 @@ public class Cliente {
 		Client client = ClientBuilder.newClient();
 		WebTarget webTarget = client
 				.target("http://localhost:8080/AjoCorrales/upmsocial/usuarios/" + nickname + "/" + patron);
+
+		Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
+		Response response = invocationBuilder.get();
+
+		if (response.getStatus() != 200) {
+			throw new RuntimeException("Petición fallida : código de error HTTP : " + response.getStatus());
+		}
+		return response.readEntity(String.class);
+	}
+
+	public static String getAmigosPatron(String nickname, String patron) {
+		Client client = ClientBuilder.newClient();
+		WebTarget webTarget = client
+				.target("http://localhost:8080/AjoCorrales/upmsocial/usuarios/" + nickname + "/amigos/" + patron);
 
 		Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
 		Response response = invocationBuilder.get();

@@ -175,7 +175,7 @@ public class SentenciasSQL {
 		}
 	}
 
-	public static ResultSet selectAmigos(String nickname, String patron) {
+	public static ResultSet selectAmigosPatron(String nickname, String patron) {
 		String sql = "select nickname,nombreCompleto from Usuarios where nickname in (select nickAmigo from Amigos where nickname ='"
 				+ nickname + "') and nickname like '%" + patron + "%' or nombreCompleto like '%" + patron + "%'";
 		PreparedStatement ps = null;
@@ -190,7 +190,7 @@ public class SentenciasSQL {
 		}
 	}
 
-	public static ResultSet selectAmigosSinPatron(String nickname) {
+	public static ResultSet selectAmigos(String nickname) {
 		String sql = "select nickname,nombreCompleto from Usuarios where nickname in (select nickAmigo from Amigos where nickname ='"
 				+ nickname + "')";
 		PreparedStatement ps = null;

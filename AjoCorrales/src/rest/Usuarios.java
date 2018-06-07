@@ -157,7 +157,7 @@ public class Usuarios {
 		ResultSet rs = null;
 		Usuario user = null;
 		try {
-			rs = SentenciasSQL.selectAmigosSinPatron(nickname);
+			rs = SentenciasSQL.selectAmigos(nickname);
 			if (rs != null)
 				while (rs.next()) {
 					user = new Usuario(rs.getString("nickname"), rs.getString("nombreCompleto"));
@@ -177,13 +177,13 @@ public class Usuarios {
 	@GET
 	@Path("/{nickname}/amigos/{amigo}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getAmigos(@PathParam("nickname") String nickname, @PathParam("amigo") String patron) {
+	public String getAmigosPatron(@PathParam("nickname") String nickname, @PathParam("amigo") String patron) {
 		log.debug("Petición recibida en getAmigos()");
 		JSONArray objDevolver = new JSONArray();
 		ResultSet rs = null;
 		Usuario user = null;
 		try {
-			rs = SentenciasSQL.selectAmigos(nickname, patron);
+			rs = SentenciasSQL.selectAmigosPatron(nickname, patron);
 			if (rs != null)
 				while (rs.next()) {
 					user = new Usuario(rs.getString("nickname"), rs.getString("nombreCompleto"));
