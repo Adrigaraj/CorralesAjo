@@ -302,4 +302,38 @@ public class Usuarios {
 		else
 			return new AppResponse(Status.BAD_REQUEST, "Error ", null).toJtoString();
 	}
+
+	@GET
+	@Path("/{nickname}/appmovil")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getAppMovil(@PathParam("nickname") String nickname) {
+
+		log.debug("Petición recibida en getAppMovil(nickname)");
+		JSONArray objDevolver = new JSONArray();
+		ResultSet rs = null;
+		if (nickname == null || nickname.equals("")) {
+			return new AppResponse(Status.BAD_REQUEST, "No se ha recibido el nick", null).toJtoString();
+		}
+		try {
+
+			rs = SentenciasSQL.getAppMovil(nickname);
+			while (rs != null && rs.next()) {
+				AppMovil app = new AppMovil(rs.getString("nickname"), rs.getString("nombreCompleto"),
+						rs.getString("pais"), rs.getString("fechaNacimiento"), rs.getString("correo"),
+						rs.getString("fechaAlta"), rs.getString("idPublicacion"), rs.getString("fechaPublicacion"),
+						rs.getString("propietario"), rs.getString("ultimoEstado"), rs.getInt("numAmigos"),
+						rs.getString("tweet1"), rs.getString("tweet2"), rs.getString("tweet3"), rs.getString("tweet4"),
+						rs.getString("tweet5"), rs.getString("tweet6"), rs.getString("tweet7"), rs.getString("tweet8"),
+						rs.getString("tweet9"), rs.getString("tweet10"));
+
+				objDevolver.put(app.toJSON());
+
+			}
+			return new AppResponseJSONValue(Status.OK, null, objDevolver).toJtoString();
+		} catch (SQLException e) {
+			log.error(e.getMessage() + e.getStackTrace());
+			return new AppResponse(Status.BAD_REQUEST, "Código error: " + e.getErrorCode(), null).toJtoString();
+		}
+
+	}
 }

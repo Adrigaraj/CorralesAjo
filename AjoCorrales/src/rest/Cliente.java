@@ -27,7 +27,8 @@ public class Cliente {
 						"USUARIOS: \n   1.Obtener todos los usuarios \n   2.Obtener un usuario determinado \n   3.Añadir un usuario \n   4.Actualizar perfil \n   5.Borrar perfil");
 				System.out.println(
 						"AMIGOS: \n   6.Agregar un amigo \n   7.Borrar un amigo \n   8.Ver mis amigos \n   9.Buscar usuarios por patrón \n   10.Buscar mis amigos por patrón");
-				System.out.println("PUBLICACIONES: \n   11.Buscar publicaciones de un usuario \n   12. ");
+				System.out.println(
+						"PUBLICACIONES: \n   11.Buscar publicaciones de un usuario \n   12.Ver aplicación web para un usuario \n   13. ");
 				try {
 					i = Integer.parseInt(sc.nextLine());
 				} catch (NumberFormatException e) {
@@ -121,7 +122,9 @@ public class Cliente {
 					System.out.println(imprimirPrettyJson(buscarpublicaciones(usuario11, patron11)));
 					break;
 				case 12:
-
+					System.out.println("Introduce el nickname");
+					String usuario12 = sc.nextLine();
+					System.out.println(imprimirPrettyJson(getAppMovil(usuario12)));
 					break;
 				case 13:
 
@@ -307,6 +310,20 @@ public class Cliente {
 		Client client = ClientBuilder.newClient();
 		WebTarget webTarget = client
 				.target("http://localhost:8080/AjoCorrales/upmsocial/usuarios/" + nickname + "/amigos/" + patron);
+
+		Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
+		Response response = invocationBuilder.get();
+
+		if (response.getStatus() != 200) {
+			throw new RuntimeException("Petición fallida : código de error HTTP : " + response.getStatus());
+		}
+		return response.readEntity(String.class);
+	}
+
+	public static String getAppMovil(String nickname) {
+		Client client = ClientBuilder.newClient();
+		WebTarget webTarget = client
+				.target("http://localhost:8080/AjoCorrales/upmsocial/usuarios/" + nickname + "/appmovil");
 
 		Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
 		Response response = invocationBuilder.get();
