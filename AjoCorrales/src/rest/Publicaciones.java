@@ -30,7 +30,7 @@ public class Publicaciones {
 	private static final Logger log = Logger.getLogger(ClassName.class.getName());
 
 	@POST
-	@Path("{nickname}")
+	@Path("/{nickname}")
 	@Consumes(MediaType.APPLICATION_XML)
 	@Produces(MediaType.APPLICATION_JSON)
 	public String añadirPublicacion(JAXBElement<Publicacion> publi, @PathParam("nickname") String nickname) {
@@ -62,7 +62,7 @@ public class Publicaciones {
 	}
 
 	@DELETE
-	@Path("{nickname}/{idPubli}")
+	@Path("/{nickname}/{idPubli}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String borrarPublicacion(@PathParam("nickname") String nickname, @PathParam("idPubli") String idPubli) {
 		log.debug("Petición recibida en borrarPublicacion(nickname, idPubli)");
@@ -80,7 +80,7 @@ public class Publicaciones {
 	}
 
 	@GET
-	@Path("{nickname}")
+	@Path("/{nickname}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String buscarPublicaciones(@PathParam("nickname") String nickname, @HeaderParam("fecha1") String fecha1,
 			@HeaderParam("fecha2") String fecha2, @HeaderParam("user") String user) {
