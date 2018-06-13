@@ -1,7 +1,10 @@
 package rest;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.json.JSONObject;
 
+@XmlRootElement
 public class Publicacion {
 	private String idPublicacion;
 	private String fechaPublicacion;
@@ -9,7 +12,6 @@ public class Publicacion {
 	private String tweet;
 
 	public Publicacion() {
-
 	}
 
 	public Publicacion(String idPublicacion, String fechaPublicacion, String propietario, String tweet) {

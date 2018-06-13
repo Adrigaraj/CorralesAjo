@@ -25,7 +25,7 @@ public class AppMovil {
 	String tweet10;
 
 	public AppMovil() {
-	};
+	}
 
 	public AppMovil(String nickname, String nombreCompleto, String pais, String fechaNacimiento, String correo,
 			String fechaAlta, String ultimoIdPubli, String ultimoTweet, int numAmigos, String tweet1, String tweet2,
