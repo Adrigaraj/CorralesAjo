@@ -19,6 +19,13 @@ public class Publicacion {
 		this.tweet = tweet;
 	}
 
+	public Publicacion(String idPublicacion, String propietario, String tweet) {
+		this.idPublicacion = idPublicacion;
+		this.fechaPublicacion = "";
+		this.propietario = propietario;
+		this.tweet = tweet;
+	}
+
 	public JSONObject toJSON() {
 		JSONObject JsObj = new JSONObject();
 		JsObj.put("idPublicacion", this.idPublicacion);

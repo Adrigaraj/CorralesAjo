@@ -320,11 +320,10 @@ public class Usuarios {
 			while (rs != null && rs.next()) {
 				AppMovil app = new AppMovil(rs.getString("nickname"), rs.getString("nombreCompleto"),
 						rs.getString("pais"), rs.getString("fechaNacimiento"), rs.getString("correo"),
-						rs.getString("fechaAlta"), rs.getString("idPublicacion"), rs.getString("fechaPublicacion"),
-						rs.getString("propietario"), rs.getString("ultimoEstado"), rs.getInt("numAmigos"),
-						rs.getString("tweet1"), rs.getString("tweet2"), rs.getString("tweet3"), rs.getString("tweet4"),
-						rs.getString("tweet5"), rs.getString("tweet6"), rs.getString("tweet7"), rs.getString("tweet8"),
-						rs.getString("tweet9"), rs.getString("tweet10"));
+						rs.getString("fechaAlta"), rs.getString("ultimoIdPubli"), rs.getString("ultimoTweet"),
+						rs.getInt("numAmigos"), rs.getString("tweet1"), rs.getString("tweet2"), rs.getString("tweet3"),
+						rs.getString("tweet4"), rs.getString("tweet5"), rs.getString("tweet6"), rs.getString("tweet7"),
+						rs.getString("tweet8"), rs.getString("tweet9"), rs.getString("tweet10"));
 
 				objDevolver.put(app.toJSON());
 

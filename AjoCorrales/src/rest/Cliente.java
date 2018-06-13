@@ -28,7 +28,8 @@ public class Cliente {
 				System.out.println(
 						"AMIGOS: \n   6.Agregar un amigo \n   7.Borrar un amigo \n   8.Ver mis amigos \n   9.Buscar usuarios por patrón \n   10.Buscar mis amigos por patrón");
 				System.out.println(
-						"PUBLICACIONES: \n   11.Buscar publicaciones de un usuario \n   12.Ver aplicación web para un usuario \n   13. ");
+						"PUBLICACIONES: \n   11.Añadir Publicación \n   12. \n   13. \n   14.Buscar publicaciones de un usuario \n ");
+				System.out.println("APPMOVIL: \n 15. Ver aplicación web para un usuario \n");
 				try {
 					i = Integer.parseInt(sc.nextLine());
 				} catch (NumberFormatException e) {
@@ -115,25 +116,30 @@ public class Cliente {
 					System.out.println(imprimirPrettyJson(getAmigosPatron(usuario10, patron10)));
 					break;
 				case 11:
-					System.out.println("Introduce el nickname de las publicaciones");
+					System.out.println("Introduce el título de la publicación(idPublicacion)");
+					String idPublicacion11 = sc.nextLine();
+					System.out.println("Introduce el propietario de la publicación(nickname)");
 					String usuario11 = sc.nextLine();
-					System.out.println("Introduce el patron para filtrar publicaciones");
-					String patron11 = sc.nextLine();
-					System.out.println(imprimirPrettyJson(buscarpublicaciones(usuario11, patron11)));
+					System.out.println("Introduce el texto a escribir(tweet)");
+					String tweet11 = sc.nextLine();
+					System.out.println(imprimirPrettyJson(añadirPublicacion(idPublicacion11, usuario11, tweet11)));
 					break;
 				case 12:
-					System.out.println("Introduce el nickname");
-					String usuario12 = sc.nextLine();
-					System.out.println(imprimirPrettyJson(getAppMovil(usuario12)));
 					break;
 				case 13:
 
 					break;
 				case 14:
-
+					System.out.println("Introduce el nickname de las publicaciones");
+					String usuario14 = sc.nextLine();
+					System.out.println("Introduce el patron para filtrar publicaciones");
+					String patron14 = sc.nextLine();
+					System.out.println(imprimirPrettyJson(buscarpublicaciones(usuario14, patron14)));
 					break;
 				case 15:
-
+					System.out.println("Introduce el nickname");
+					String usuario12 = sc.nextLine();
+					System.out.println(imprimirPrettyJson(getAppMovil(usuario12)));
 					break;
 				case 16:
 
@@ -308,11 +314,26 @@ public class Cliente {
 
 	public static String buscarpublicaciones(String nickname, String patron) {
 		Client client = ClientBuilder.newClient();
-		WebTarget webTarget = client
-				.target("http://localhost:8080/AjoCorrales/upmsocial/usuarios/" + nickname + "/amigos/" + patron);
+		WebTarget webTarget = client.target(
+				"http://localhost:8080/AjoCorrales/upmsocial/usuarios/" + nickname + "/amigos/publicaciones/" + patron);
 
 		Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
 		Response response = invocationBuilder.get();
+
+		if (response.getStatus() != 200) {
+			throw new RuntimeException("Petición fallida : código de error HTTP : " + response.getStatus());
+		}
+		return response.readEntity(String.class);
+	}
+
+	public static String añadirPublicacion(String idPublicacion, String propietario, String tweet) {
+
+		Client client = ClientBuilder.newClient();
+		WebTarget webTarget = client.target("http://localhost:8080/AjoCorrales/upmsocial/publicaciones/" + propietario);
+		Publicacion pub = new Publicacion(idPublicacion, propietario, tweet);
+
+		Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
+		Response response = invocationBuilder.post(Entity.xml(pub));
 
 		if (response.getStatus() != 200) {
 			throw new RuntimeException("Petición fallida : código de error HTTP : " + response.getStatus());

@@ -282,56 +282,53 @@ public class SentenciasSQL {
 	public static ResultSet getAppMovil(String nickname) {
 		PreparedStatement ps = null;
 		try {
-			ps = ConexionBBDD.getConn().prepareStatement(
-					"select distinct(us.nickname), us.nombreCompleto, us.pais, us.fechaNacimiento, us.correo, us.fechaAlta, "
-							+ "pu.idPublicacion, pu.fechaPublicacion, pu.propietario, pu.tweet ultimoEstado, (select count(nickAmigo) from Amigos where nickname = '"
-							+ nickname + "') numAmigos,"
-							+ "(select distinct(tweet) from Publicaciones where idPublicacion = "
-							+ "	(select idPublicacion from Publicaciones where propietario in "
-							+ "		(select a.nickAmigo from Amigos a where a.nickname = '" + nickname
-							+ "') order by substring(fechaPublicacion, 7, 4) DESC, substring(fechaPublicacion, 4, 2) DESC, substring(fechaPublicacion, 1, 2) DESC limit 1 offset 0)"
-							+ ") as tweet1," + "(select distinct(tweet) from Publicaciones where idPublicacion = "
-							+ "	(select idPublicacion from Publicaciones where propietario in "
-							+ "		(select a.nickAmigo from Amigos a where a.nickname = '" + nickname
-							+ "') order by substring(fechaPublicacion, 7, 4) DESC, substring(fechaPublicacion, 4, 2) DESC, substring(fechaPublicacion, 1, 2) DESC limit 1 offset 1)"
-							+ ") as tweet2," + "(select distinct(tweet) from Publicaciones where idPublicacion = "
-							+ "	(select idPublicacion from Publicaciones where propietario in "
-							+ "		(select a.nickAmigo from Amigos a where a.nickname = '" + nickname
-							+ "') order by substring(fechaPublicacion, 7, 4) DESC, substring(fechaPublicacion, 4, 2) DESC, substring(fechaPublicacion, 1, 2) DESC limit 1 offset 2)"
-							+ ") as tweet3," + "(select distinct(tweet) from Publicaciones where idPublicacion = "
-							+ "	(select idPublicacion from Publicaciones where propietario in "
-							+ "		(select a.nickAmigo from Amigos a where a.nickname = '" + nickname
-							+ "') order by substring(fechaPublicacion, 7, 4) DESC, substring(fechaPublicacion, 4, 2) DESC, substring(fechaPublicacion, 1, 2) DESC limit 1 offset 3)"
-							+ ") as tweet4," + "(select distinct(tweet) from Publicaciones where idPublicacion = "
-							+ "	(select idPublicacion from Publicaciones where propietario in "
-							+ "		(select a.nickAmigo from Amigos a where a.nickname = '" + nickname
-							+ "') order by substring(fechaPublicacion, 7, 4) DESC, substring(fechaPublicacion, 4, 2) DESC, substring(fechaPublicacion, 1, 2) DESC limit 1 offset 4)"
-							+ ") as tweet5," + "(select distinct(tweet) from Publicaciones where idPublicacion = "
-							+ "	(select idPublicacion from Publicaciones where propietario in "
-							+ "		(select a.nickAmigo from Amigos a where a.nickname = '" + nickname
-							+ "') order by substring(fechaPublicacion, 7, 4) DESC, substring(fechaPublicacion, 4, 2) DESC, substring(fechaPublicacion, 1, 2) DESC limit 1 offset 5)"
-							+ ") as tweet6," + "(select distinct(tweet) from Publicaciones where idPublicacion = "
-							+ "	(select idPublicacion from Publicaciones where propietario in "
-							+ "		(select a.nickAmigo from Amigos a where a.nickname = '" + nickname
-							+ "') order by substring(fechaPublicacion, 7, 4) DESC, substring(fechaPublicacion, 4, 2) DESC, substring(fechaPublicacion, 1, 2) DESC limit 1 offset 6)"
-							+ ") as tweet7," + "(select distinct(tweet) from Publicaciones where idPublicacion = "
-							+ "	(select idPublicacion from Publicaciones where propietario in "
-							+ "		(select a.nickAmigo from Amigos a where a.nickname = '" + nickname
-							+ "') order by substring(fechaPublicacion, 7, 4) DESC, substring(fechaPublicacion, 4, 2) DESC, substring(fechaPublicacion, 1, 2) DESC limit 1 offset 7)"
-							+ ") as tweet8," + "(select distinct(tweet) from Publicaciones where idPublicacion = "
-							+ "	(select idPublicacion from Publicaciones where propietario in "
-							+ "		(select a.nickAmigo from Amigos a where a.nickname = '" + nickname
-							+ "') order by substring(fechaPublicacion, 7, 4) DESC, substring(fechaPublicacion, 4, 2) DESC, substring(fechaPublicacion, 1, 2) DESC limit 1 offset 8)"
-							+ ") as tweet9," + "(select distinct(tweet) from Publicaciones where idPublicacion = "
-							+ "	(select idPublicacion from Publicaciones where propietario in "
-							+ "		(select a.nickAmigo from Amigos a where a.nickname = '" + nickname
-							+ "') order by substring(fechaPublicacion, 7, 4) DESC, substring(fechaPublicacion, 4, 2) DESC, substring(fechaPublicacion, 1, 2) DESC limit 1 offset 9)"
-							+ ") as tweet10" + "from (Usuarios as us, Publicaciones as pu, Amigos as am)"
-							+ "where us.nickname = '" + nickname + "' "
-							+ "and pu.idPublicacion = (select idPublicacion from Publicaciones where propietario = '"
-							+ nickname + "' "
-							+ "order by substring(fechaPublicacion, 7, 4) DESC, substring(fechaPublicacion, 4, 2) DESC, substring(fechaPublicacion, 1, 2) DESC limit 1);");
-			ps.setString(1, nickname);
+			ps = ConexionBBDD.getConn().prepareStatement("select us.*,"
+					+ "(select idPublicacion from Publicaciones where propietario = '" + nickname
+					+ "' order by idPublicacion desc limit 1) ultimoIdPubli,"
+					+ "(select tweet from Publicaciones where propietario = '" + nickname
+					+ "' order by idPublicacion desc limit 1) ultimoTweet, "
+					+ "(select count(nickAmigo) from Amigos where nickname = '" + nickname + "') numAmigos,"
+					+ "(select distinct(tweet) from Publicaciones where idPublicacion = "
+					+ "(select idPublicacion from Publicaciones where propietario in "
+					+ "(select a.nickAmigo from Amigos a where a.nickname = '" + nickname + "' "
+					+ ")order by substring(fechaPublicacion, 7, 4) DESC, substring(fechaPublicacion, 4, 2) DESC, substring(fechaPublicacion, 1, 2) DESC limit 1 offset 0)"
+					+ ") tweet1," + "(select distinct(tweet) from Publicaciones where idPublicacion ="
+					+ "(select idPublicacion from Publicaciones where propietario in "
+					+ "(select a.nickAmigo from Amigos a where a.nickname = '" + nickname + "'"
+					+ ")order by substring(fechaPublicacion, 7, 4) DESC, substring(fechaPublicacion, 4, 2) DESC, substring(fechaPublicacion, 1, 2) DESC limit 1 offset 1)"
+					+ ") tweet2," + "(select distinct(tweet) from Publicaciones where idPublicacion = "
+					+ "(select idPublicacion from Publicaciones where propietario in "
+					+ "(select a.nickAmigo from Amigos a where a.nickname = '" + nickname + "'"
+					+ ") order by substring(fechaPublicacion, 7, 4) DESC, substring(fechaPublicacion, 4, 2) DESC, substring(fechaPublicacion, 1, 2) DESC limit 1 offset 2)"
+					+ ") tweet3," + "(select distinct(tweet) from Publicaciones where idPublicacion = "
+					+ "(select idPublicacion from Publicaciones where propietario in "
+					+ "(select a.nickAmigo from Amigos a where a.nickname = '" + nickname + "'"
+					+ ") order by substring(fechaPublicacion, 7, 4) DESC, substring(fechaPublicacion, 4, 2) DESC, substring(fechaPublicacion, 1, 2) DESC limit 1 offset 3)"
+					+ ") tweet4,(select distinct(tweet) from Publicaciones where idPublicacion = "
+					+ "(select idPublicacion from Publicaciones where propietario in "
+					+ "(select a.nickAmigo from Amigos a where a.nickname = '" + nickname + "'"
+					+ ") order by substring(fechaPublicacion, 7, 4) DESC, substring(fechaPublicacion, 4, 2) DESC, substring(fechaPublicacion, 1, 2) DESC limit 1 offset 4)"
+					+ ") tweet5," + "(select distinct(tweet) from Publicaciones where idPublicacion = "
+					+ "(select idPublicacion from Publicaciones where propietario in "
+					+ "(select a.nickAmigo from Amigos a where a.nickname = '" + nickname + "'"
+					+ ") order by substring(fechaPublicacion, 7, 4) DESC, substring(fechaPublicacion, 4, 2) DESC, substring(fechaPublicacion, 1, 2) DESC limit 1 offset 5)"
+					+ ") tweet6," + "(select distinct(tweet) from Publicaciones where idPublicacion = "
+					+ "(select idPublicacion from Publicaciones where propietario in "
+					+ "(select a.nickAmigo from Amigos a where a.nickname = '" + nickname + "'"
+					+ ") order by substring(fechaPublicacion, 7, 4) DESC, substring(fechaPublicacion, 4, 2) DESC, substring(fechaPublicacion, 1, 2) DESC limit 1 offset 6)"
+					+ ") tweet7," + "(select distinct(tweet) from Publicaciones where idPublicacion = "
+					+ "(select idPublicacion from Publicaciones where propietario in "
+					+ "(select a.nickAmigo from Amigos a where a.nickname = '" + nickname + "'"
+					+ ") order by substring(fechaPublicacion, 7, 4) DESC, substring(fechaPublicacion, 4, 2) DESC, substring(fechaPublicacion, 1, 2) DESC limit 1 offset 7)"
+					+ ") tweet8," + "(select distinct(tweet) from Publicaciones where idPublicacion = "
+					+ "(select idPublicacion from Publicaciones where propietario in "
+					+ "(select a.nickAmigo from Amigos a where a.nickname = '" + nickname + "'"
+					+ ") order by substring(fechaPublicacion, 7, 4) DESC, substring(fechaPublicacion, 4, 2) DESC, substring(fechaPublicacion, 1, 2) DESC limit 1 offset 8)"
+					+ ") tweet9," + "(select distinct(tweet) from Publicaciones where idPublicacion = "
+					+ "(select idPublicacion from Publicaciones where propietario in "
+					+ "(select a.nickAmigo from Amigos a where a.nickname = '" + nickname + "'"
+					+ ") order by substring(fechaPublicacion, 7, 4) DESC, substring(fechaPublicacion, 4, 2) DESC, substring(fechaPublicacion, 1, 2) DESC limit 1 offset 9)"
+					+ ") tweet10 " + "FROM Usuarios us where us.nickname = '" + nickname + "'");
 
 			return ps.executeQuery();
 
