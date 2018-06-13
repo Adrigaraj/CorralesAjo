@@ -29,7 +29,7 @@ public class Cliente {
 						"AMIGOS: \n   6.Agregar un amigo \n   7.Borrar un amigo \n   8.Ver mis amigos \n   9.Buscar usuarios por patrón \n   10.Buscar mis amigos por patrón");
 				System.out.println(
 						"PUBLICACIONES: \n   11.Añadir Publicación \n   12. \n   13. \n   14.Buscar publicaciones de un usuario \n ");
-				System.out.println("APPMOVIL: \n 15. Ver aplicación web para un usuario \n");
+				System.out.println("APPMOVIL: \n   15. Ver aplicación web para un usuario \n");
 				try {
 					i = Integer.parseInt(sc.nextLine());
 				} catch (NumberFormatException e) {
