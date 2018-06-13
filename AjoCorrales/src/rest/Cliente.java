@@ -28,7 +28,7 @@ public class Cliente {
 				System.out.println(
 						"AMIGOS: \n   6.Agregar un amigo \n   7.Borrar un amigo \n   8.Ver mis amigos \n   9.Buscar usuarios por patrón \n   10.Buscar mis amigos por patrón");
 				System.out.println(
-						"PUBLICACIONES: \n   11.Añadir Publicación \n   12. \n   13. \n   14.Buscar publicaciones de un usuario \n ");
+						"PUBLICACIONES: \n   11.Añadir publicación \n   12.Borrar publicacion \n   13.Buscar publicacion por fecha \n   14.Buscar publicaciones de un usuario \n ");
 				System.out.println("APPMOVIL: \n   15. Ver aplicación web para un usuario \n");
 				try {
 					i = Integer.parseInt(sc.nextLine());
@@ -125,6 +125,11 @@ public class Cliente {
 					System.out.println(imprimirPrettyJson(añadirPublicacion(idPublicacion11, usuario11, tweet11)));
 					break;
 				case 12:
+					System.out.println("Introduce tu nickname");
+					String usuario12 = sc.nextLine();
+					System.out.println("Introduce el idPublicacion");
+					String idPublicacion12 = sc.nextLine();
+					System.out.println(imprimirPrettyJson(borrarPublicacion(usuario12, idPublicacion12)));
 					break;
 				case 13:
 
@@ -138,8 +143,8 @@ public class Cliente {
 					break;
 				case 15:
 					System.out.println("Introduce el nickname");
-					String usuario12 = sc.nextLine();
-					System.out.println(imprimirPrettyJson(getAppMovil(usuario12)));
+					String usuario15 = sc.nextLine();
+					System.out.println(imprimirPrettyJson(getAppMovil(usuario15)));
 					break;
 				case 16:
 
@@ -334,6 +339,20 @@ public class Cliente {
 
 		Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
 		Response response = invocationBuilder.post(Entity.xml(pub));
+
+		if (response.getStatus() != 200) {
+			throw new RuntimeException("Petición fallida : código de error HTTP : " + response.getStatus());
+		}
+		return response.readEntity(String.class);
+	}
+
+	public static String borrarPublicacion(String nickname, String idPublicacion) {
+		Client client = ClientBuilder.newClient();
+		WebTarget webTarget = client
+				.target("http://localhost:8080/AjoCorrales/upmsocial/publicaciones/" + nickname + "/" + idPublicacion);
+
+		Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
+		Response response = invocationBuilder.delete();
 
 		if (response.getStatus() != 200) {
 			throw new RuntimeException("Petición fallida : código de error HTTP : " + response.getStatus());
